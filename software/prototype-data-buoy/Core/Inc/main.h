@@ -38,9 +38,9 @@ extern "C" {
 #include <string.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include "STM32L476RG.h"
-#include "STM32L476RG_gpio_driver.h"
-#include "STM32L476RG_i2c_driver.h"
+//#include "STM32L476RG.h"
+//#include "STM32L476RG_gpio_driver.h"
+//#include "STM32L476RG_i2c_driver.h"
 
 #include "hal.h"
 #include "arduino_lmic.h"

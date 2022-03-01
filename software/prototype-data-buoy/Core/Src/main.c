@@ -79,7 +79,7 @@ TIM_HandleTypeDef htim3;
 static volatile uint32_t tick = 0;
 
 FLASH_EraseInitTypeDef FlashEraseInit = {0};
-I2Cx_Handle_t I2C1Handle;
+//I2Cx_Handle_t I2C1Handle;
 uint32_t flashError = 0;
 uint8_t from_standby = 0;
 
