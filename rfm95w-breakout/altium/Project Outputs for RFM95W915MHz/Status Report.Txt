@@ -1,0 +1,12 @@
+Output: NC Drill Files
+Type  : NC Drill
+From  : Project [RFM95W915MHz.PrjPcb]
+   Generated File[RFM95W.TXT]
+   Generated File[RFM95W.LDP]
+   Generated File[RFM95W.DRR]
+
+
+Files Generated   : 3
+Documents Printed : 0
+
+Finished Output Generation At 9:46:45 AM On 3/9/2021

@@ -1,0 +1,19 @@
+Removed Pin From Net: NetName=GND Pin=H1-2_1
+Removed Pin From Net: NetName=GND Pin=H1-2_2
+Removed Pin From Net: NetName=GND Pin=H1-3_1
+Removed Pin From Net: NetName=GND Pin=H1-3_2
+Added Component: Designator=J(SAMTEC_SMA-J-P-H-ST-EM1)
+Add component (AddParameter): Name = "Digi-Key_Part_Number"; Value = "SAM8857-ND"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "MF"; Value = "Samtec"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "MP"; Value = "SMA-J-P-H-ST-EM1"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Package"; Value = "None"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "SnapEDA_Link"; Value = "https://www.snapeda.com/parts/SMA-J-P-H-ST-EM1/Samtec%20Inc./view-part/134500/?ref=snap"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Toby_UK-Purchase-URL"; Value = "https://snapeda.com/shop?store=Toby+UK&id=134500"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = ""; VariantName = "[No Variations]"
+Added Pin To Net: NetName=GND Pin=J-2_1
+Added Pin To Net: NetName=GND Pin=J-2_2
+Added Pin To Net: NetName=GND Pin=J-3_1
+Added Pin To Net: NetName=GND Pin=J-3_2
+Added Pin To Net: NetName=NetJ_1 Pin=J-1
+Added Pin To Net: NetName=NetJ_1 Pin=U1-9
+Added Net: Name=NetJ_1
