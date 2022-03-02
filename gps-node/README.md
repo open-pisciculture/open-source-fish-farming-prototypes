@@ -11,7 +11,7 @@ The onboard ST-Link programmer is indicated in the following image:
 
 ![ST-Link programmer]()
 
-##### Programming the microcontroller with the removed programmer
+#### Programming the microcontroller with the removed programmer
 
 #### Removing solder bridges
 
