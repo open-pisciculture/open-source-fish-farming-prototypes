@@ -26,3 +26,8 @@ The onboard ST-Link programmer is indicated in the following image:
 The device will wait until it receives data from the GPS module before initiating the join procedure. If the GPS is not sending data, you can check for the following:
 - First, verify that the red led from the module is blinking. It may take a bit (~30 seconds or maybe more), so make sure to wait an appropiate amount of time.
 - Try using the device outside. The GPS module may have trouble receiving the signal indoors.
+
+## Additional
+
+### Program flowchart
+![Program flowchart](images/flowchart.png)
