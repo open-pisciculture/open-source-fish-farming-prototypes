@@ -26,6 +26,10 @@ The onboard ST-Link programmer is indicated in the following image:
 
 #### Removing solder bridges
 
+## Instructions
+
+![circuit schematics](images/schematics.png)
+
 ## Usage
 
 1. Turn on the device and wait until the GPS is sending data. The module has a red led that will blink once it's ready.
