@@ -31,8 +31,12 @@ The onboard ST-Link programmer is indicated in the following image:
 ### Circuit schematics
 ![circuit schematics](images/schematics.png)
 
-### Pin table
-| 
+### Pin connections
+
+#### RFM95W connections
+| NUCLEO Pin | RFM95W Pin|
+| ---------- | --------- |
+| A3         | DIO0      |
 
 ## Usage
 
