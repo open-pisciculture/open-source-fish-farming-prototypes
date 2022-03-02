@@ -1,7 +1,14 @@
 # GPS LoRaWAN node
 This is a device for transmitting gps coordinates using LoRaWAN each time the user presses a button. 
-
 ![GPS breadboard circuit](images/breadboard_circuit.jpeg)
+
+## Overview
+
+### Component list
+- A NUCLEO-L476RG microcontroller board
+- A GPS module GY-NEO6MV2
+- An RFM95W module for LoRaWAN transmissions. For the breakout board used, refer to this [section of the repository](https://github.com/open-pisciculture/temp-open-fish-farming/tree/main/rfm95w-breakout)
+- A 3.3V power supply with 3 AA batteries in series and an MCP1700 voltage regulator 
 
 ## Prerequisites
 
