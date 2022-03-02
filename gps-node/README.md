@@ -34,10 +34,16 @@ The onboard ST-Link programmer is indicated in the following image:
 ### Pin connections
 
 #### RFM95W connections
-| NUCLEO Pin | RFM95W Pin|
-| ---------- | --------- |
-| A3         | DIO0      |
-
+| NUCLEO pin | RFM95W breakout pin | RFM95W module pin |
+|:----------:|:-------------------:|-------------------|
+|     D12    |          2          | MISO              |
+|     D11    |          3          | MOSI              |
+|     D3     |          4          | SCK               |
+|     D10    |          5          | NSS               |
+|     A0     |          6          | RESET             |
+|     A3     |          14         | DIO0              |
+|     D7     |          15         | DIO1              |
+|     A1     |          16         | DIO2              |
 ## Usage
 
 1. Turn on the device and wait until the GPS is sending data. The module has a red led that will blink once it's ready.
