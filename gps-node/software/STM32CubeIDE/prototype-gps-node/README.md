@@ -1,1 +1,1 @@
-# prototype-gps-node
+# STM32CubeIDE project
