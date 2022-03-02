@@ -1,4 +1,7 @@
 # GPS LoRaWAN node
+This is a device for transmitting gps coordinates using LoRaWAN each time the user presses a button. 
+
+![GPS breadboard circuit](images/breadboard_circuit.jpeg)
 
 ## Prerequisites
 
