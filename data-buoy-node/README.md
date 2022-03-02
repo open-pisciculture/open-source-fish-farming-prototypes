@@ -1,2 +1,12 @@
 # Data buoy prototype
-![alt text](hardware/test.png)
+
+## Overview
+
+## Instructions
+
+## Usage
+
+## License
+
+## Additional
+![Software flowchart](images/flowchart.png)
