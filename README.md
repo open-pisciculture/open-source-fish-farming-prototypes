@@ -1,5 +1,23 @@
-# Open fish farming prototypes
-![alt text](hardware/test.png?raw=true)
+# Open-source fish farming prototypes
+
+This repository presents 3 prototypes for fish farming applications based on LoRaWAN.
+
+## Prototypes
+
+### Data buoy node
+![imagen de la boya](imagen.png)
+
+This is a device for remote monitoring of temperature, pH and dissolved oxygen variables in fish farming. The data buoy floats on the fish pond and periodically transmits these three values to an on-site gateway that forwards the data to an AWS database. The software, hardware and mechanical structure files are available under permissive open-source licenses and instructions for building your own can be found inside the [data-buoy-node folder](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/tree/main/data-buoy-node).
+
+### GPS coordinates node
+![imagen del nodo gps?](imagen.png)
+
+This system transmits GPS coordinates each time the user presses a button to an on-site gateway and saves the data in an AWS database alongisde LoRaWAN packet information. This device can be used for LoRaWAN coverage sampling. The software and circuit schematics are available inside the [gps-node folder](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/tree/main/gps-node).
+
+### RFM95W breakout board
+![imagen del breakout?](imagen.png)
+
+A simple breakout board for an RFM95W module for easier prototyping with a breadboard. Hardware files are available inside the [rfm95w-breakout folder](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/tree/main/rfm95w-breakout).
 
 ## Article
 
