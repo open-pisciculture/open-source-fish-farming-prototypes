@@ -15,7 +15,7 @@ This is a device for remote monitoring of temperature, pH and dissolved oxygen v
 This system transmits GPS coordinates each time the user presses a button to an on-site gateway and saves the data in an AWS database alongisde LoRaWAN packet information. This device can be used for LoRaWAN coverage sampling. The software and circuit schematics are available inside the [gps-node](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/tree/main/gps-node) folder.
 
 ### RFM95W breakout board
-![RFM95W breakout](images/RFM95WBreakoutFront.png)
+![RFM95W breakout](images/RFM95WBreakoutFront.jpg)
 
 A simple breakout board for an RFM95W module for easier prototyping with a breadboard. Hardware files are available inside the [rfm95w-breakout](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/tree/main/rfm95w-breakout) folder.
 
