@@ -5,9 +5,9 @@ This repository presents 3 prototypes for fish farming applications based on LoR
 ## Sections
 
 ### Data buoy node
-<p float="left">
-  <img src="images/BuoyDiagram.png" width="50%" />
-  <img src="images/BuoyAssembled.png" width="50%" />
+<p float="middle">
+  <img src="images/BuoyDiagram.png" width="49%" />
+  <img src="images/BuoyAssembled.png" width="49%" />
 </p>
 
 This is a device for remote monitoring of temperature, pH and dissolved oxygen variables in fish farming. The data buoy floats on the fish pond and periodically transmits these three values to an on-site gateway that forwards the data to an AWS database. The software, hardware and mechanical structure files can be found inside the [data-buoy-node](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/tree/main/data-buoy-node) folder.
