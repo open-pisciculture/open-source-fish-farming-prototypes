@@ -6,21 +6,21 @@ This repository presents 3 prototypes for fish farming applications based on LoR
 
 ### Data buoy node
 <p align="left">
-   <img src="images/BuoyAssembled.png" width="70%" />
+   <img src="data-buoy-node/images/assembled.png" width="70%" />
 </p>
 
 This is a device for remote monitoring of temperature, pH and dissolved oxygen variables in fish farming. The data buoy floats on the fish pond and periodically transmits these three values to an on-site gateway that forwards the data to an AWS database. The software, hardware and mechanical structure files can be found inside the [data-buoy-node](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/tree/main/data-buoy-node) folder.
 
 ### GPS coordinates node
 <p align="left">
-   <img src="images/GPSPrototype.jpeg" width="70%" />
+   <img src="gps-node/images/breadbord_circuit.jpeg" width="70%" />
 </p>
 
 This system transmits GPS coordinates each time the user presses a button to an on-site gateway and saves the data in an AWS database alongisde LoRaWAN packet information. This device can be used for LoRaWAN coverage sampling. The software and circuit schematics are available inside the [gps-node](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/tree/main/gps-node) folder.
 
 ### RFM95W breakout board
 <p align="left">
-   <img src="images/RFM95WBreakoutFront.jpg" width="50%"/>
+   <img src="rfm95w-breakout/images/top.jpg" width="50%"/>
 </p>
 
 A simple breakout board for an RFM95W module for easier prototyping with a breadboard. Hardware files are available inside the [rfm95w-breakout](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/tree/main/rfm95w-breakout) folder.
