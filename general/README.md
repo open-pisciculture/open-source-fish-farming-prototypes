@@ -2,6 +2,8 @@
 
 Here supporting information common to various prototypes can be found.
 
-## LoRaWAN Gateway
+## Setting up the LoRaWAN Gateway with The Things Network
+
+## Creating devices in The Things Network
 
 ## Removing ST-Link Programmer and Solder Bridges from Nucleo board
