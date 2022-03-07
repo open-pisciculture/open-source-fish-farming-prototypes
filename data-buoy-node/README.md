@@ -12,7 +12,5 @@ Before assembling the data buoy, make sure to follow the initial instructions fo
 
 ## Usage
 
-## License
-
 ## Additional
 ![Software flowchart](images/flowchart.png)
