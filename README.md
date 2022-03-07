@@ -13,7 +13,7 @@ This is a device for remote monitoring of temperature, pH and dissolved oxygen v
 
 ### GPS coordinates node
 <p align="left">
-   <img src="gps-node/images/breadbord_circuit.jpeg" width="70%" />
+   <img src="gps-node/images/breadboard_circuit.jpeg" width="70%" />
 </p>
 
 This system transmits GPS coordinates each time the user presses a button to an on-site gateway and saves the data in an AWS database alongisde LoRaWAN packet information. This device can be used for LoRaWAN coverage sampling. The software and circuit schematics are available inside the [gps-node](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/tree/main/gps-node) folder.
