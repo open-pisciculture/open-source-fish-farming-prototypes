@@ -40,6 +40,9 @@ PARA CITAR:
 
 Bibtex
 
+## Attribution
+The PCB designs use 3D models and footprints from [SnapEDA](https://www.snapeda.com/).
+
 ## Licenses
 
 ### Software
