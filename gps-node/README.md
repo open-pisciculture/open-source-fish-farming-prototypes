@@ -60,8 +60,6 @@ The device will wait until it receives data from the GPS module before initiatin
 - Try using the device outside. The GPS module may have trouble receiving the signal indoors.
 - The GPS module integrates a voltage regulator. Make sure that the battery voltage is connected to the module and not the 3.3V output from the regulator.
 
-## License
-
 ## Additional
 
 ### Program flowchart
