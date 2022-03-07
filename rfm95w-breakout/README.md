@@ -4,4 +4,4 @@ This is a printed circuit board designed for easier breadboard prototyping with 
 
 ![RFM95W breakout board front and back views](images/top_and_bottom.jpeg)
 
-PCB files are available here for Altium. 
+3D models, PCB documentation and manufacturing files are available. The PCB design Altium project is also included. 
