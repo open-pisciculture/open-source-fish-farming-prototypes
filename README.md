@@ -8,7 +8,7 @@ This repository presents 3 prototypes for fish farming applications based on LoR
 <figure>
    <img
    src="images/BuoyAssembled.png"
-   alt="Logo?">
+   title="Logo?">
    <figcaption>MNDN LOGO</figcaption>
 </figure>
 
