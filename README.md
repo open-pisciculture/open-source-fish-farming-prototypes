@@ -5,7 +5,7 @@ This repository presents 3 prototypes for fish farming applications based on LoR
 ## Sections
 
 ### Data buoy node
-<figure align="left">
+<figure align="center">
    <img
    src="images/BuoyAssembled.png" width="70%"
 </figure>
