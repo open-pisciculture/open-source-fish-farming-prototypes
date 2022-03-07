@@ -28,8 +28,9 @@ A simple breakout board for an RFM95W module for easier prototyping with a bread
 ## General
 This section includes guides and information common to the various prototypes. 
 
-- LoRaWAN Gateway setup
+- LoRaWAN Gateway and Device setup
 - Removing the ST-Link programmer from the NUCLEO-64 boards
+- Amazon Web Services (AWS) services implementation
 
 ## Article
 
