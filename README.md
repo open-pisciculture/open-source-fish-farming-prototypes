@@ -20,7 +20,7 @@ This system transmits GPS coordinates each time the user presses a button to an 
 
 ### RFM95W breakout board
 <p align="left">
-   <img src="images/RFM95WBreakoutFront.jpg" width="70%"/>
+   <img src="images/RFM95WBreakoutFront.jpg" width="50%"/>
 </p>
 
 A simple breakout board for an RFM95W module for easier prototyping with a breadboard. Hardware files are available inside the [rfm95w-breakout](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/tree/main/rfm95w-breakout) folder.
