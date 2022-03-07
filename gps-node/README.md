@@ -3,7 +3,7 @@ This is a device for transmitting gps coordinates using LoRaWAN each time the us
 
 ## Overview
 <p align="left">
-  <img src="breadboard_circuit.jpeg" width="70%" />
+  <img src="images/breadboard_circuit.jpeg" width="70%" />
 </p>
 
 ### Component list
