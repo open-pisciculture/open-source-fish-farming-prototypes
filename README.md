@@ -13,7 +13,7 @@ Bibtex
 ## Licenses
 
 ### Software
-The software is licensed under an [MIT License](https://opensource.org/licenses/MIT).
+The software is licensed under an [MIT License](https://opensource.org/licenses/MIT). A copy of the license has been included in the repository and can be found [here](https://github.com/open-pisciculture/temp-open-fish-farming/blob/main/LICENSE-MIT.txt).
 
 ### Hardware
 The hardware design files are licensed under a CERN Open Source Hardware license version 2 CERN-OHL-P. Details of the license can be found [here](https://ohwr.org/project/cernohl/wikis/Documents/CERN-OHL-version-2).
