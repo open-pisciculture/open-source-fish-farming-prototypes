@@ -12,7 +12,9 @@ This repository presents 3 prototypes for fish farming applications based on LoR
 This is a device for remote monitoring of temperature, pH and dissolved oxygen variables in fish farming. The data buoy floats on the fish pond and periodically transmits these three values to an on-site gateway that forwards the data to an AWS database. The software, hardware and mechanical structure files can be found inside the [data-buoy-node](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/tree/main/data-buoy-node) folder.
 
 ### GPS coordinates node
-![GPS node breadboard](images/GPSPrototype.jpeg)
+<p align="left">
+   <img src="images/GPSPrototype.jpeg" width="70%" />
+</p>
 
 This system transmits GPS coordinates each time the user presses a button to an on-site gateway and saves the data in an AWS database alongisde LoRaWAN packet information. This device can be used for LoRaWAN coverage sampling. The software and circuit schematics are available inside the [gps-node](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/tree/main/gps-node) folder.
 
