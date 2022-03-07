@@ -1,6 +1,6 @@
 # Open-source fish farming prototypes
 
-This repository presents 3 prototypes for fish farming applications based on LoRaWAN.
+This repository presents 3 prototypes for fish farming applications based on LoRaWAN. It's recommended to first read the article version of the project.
 
 ## Sections
 
