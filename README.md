@@ -2,7 +2,7 @@
 
 This repository presents 3 prototypes for fish farming applications based on LoRaWAN.
 
-## Prototypes
+## Sections
 
 ### Data buoy node
 ![imagen de la boya](imagen.png)
@@ -18,6 +18,12 @@ This system transmits GPS coordinates each time the user presses a button to an 
 ![imagen del breakout?](imagen.png)
 
 A simple breakout board for an RFM95W module for easier prototyping with a breadboard. Hardware files are available inside the [rfm95w-breakout](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/tree/main/rfm95w-breakout) folder.
+
+## General
+This section includes guides and information common to the various prototypes. 
+
+- LoRaWAN Gateway setup
+- Removing the ST-Link programmer from the NUCLEO-64 boards
 
 ## Article
 
