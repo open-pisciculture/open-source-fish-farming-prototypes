@@ -1,0 +1,22 @@
+function Decoder(bytes, port) {
+  if (bytes.length === 8) {
+    var mcutemp = ( (bytes[0] << 8) | bytes[1] ) / 1000;
+    var temp = ( (bytes[2] << 8) | bytes[3] ) / 1000;
+    var pH = ( (bytes[4] << 8) | bytes[5] ) / 1000;
+    var DO = ( (bytes[6] << 8) | bytes[7] ) / 100;
+    return {
+      'mcu_temp': mcutemp,
+      'temp': temp,
+      'pH': pH,
+      'do': DO
+    }
+  } else {
+    var message = "Got " + String(bytes.length) + " bytes: " + String(bytes)
+    return {
+      'mcu_temp': message,
+      'temp': message,
+      'pH': message,
+      'do': message
+    }
+  }
+}

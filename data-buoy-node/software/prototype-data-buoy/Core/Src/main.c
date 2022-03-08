@@ -22,8 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-//#include "arduino_lmic.h"
-//#include "hal.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -34,28 +33,42 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
-/*  Lora message structure, 1 byte long
- *  Byte 0:
- *      bit 7:      Timeout
- *      bit 6-0:    Fencevoltage / 0.1kV  (e.g. 11.4kV = 114 in message, max 12.7kV)
+/*  Lora message structure, 8 bytes long
+ *  Byte 1-0:		Microcontroller Internal Temperature
+ *  Byte 3-2:		Water Temperature
+ *  Byte 5-4:		Water pH
+ *  Byte 7-6:		Water Dissolved Oxygen
  */
 #define LORA_MESSAGE_NUM_BYTES      8
 
-#define LORA_MESSAGE_BATTERYLOW_BYTE   (0)
-#define LORA_MESSAGE_BATTERYLOW_MASK   (1<<7)
-#define LORA_MESSAGE_VOLTAGE_BYTE   (0)
-#define LORA_MESSAGE_VOLTAGE_MASK   (0x7F)
-
+/*
+ * Location in memory of the temperature sensor factor calibration data
+ * Each device is individually factory-calibrated by ST
+ * Can be used to obtain more accurate temperature values
+ * These are the memory addresses for the STM32L476xx microcontroller. These might not be the same for
+ * other microcontrollers and should be consulted in the datasheet before reading the temperature values
+ *
+ * TEMPCAL1ADDR stores the temperature sensor ADC raw data acquired at 30°C (+- 5°C) at a reference voltage of 3.0V (+- 10mV)
+ * TEMPCAL2ADDR stores the temperature sensor ADC raw data acquired at 110°C (+- 5°C) at a reference voltage of 3.0V (+- 10mV)
+ */
 #define TEMPCAL1ADDR				(0x1FFF75A8)
 #define TEMPCAL2ADDR				(0x1FFF75CA)
 
+/*
+ * Sensor I2C addresses
+ * Can be modified with any number between 1 and 127 with the command I2C,#NEWADDR, where #NEWADDR is the new address
+ * All three sensors must have different addresses
+ */
 #define TEMP_SENSOR_I2C_ADDRESS 	102
 #define PH_SENSOR_I2C_ADDRESS 		103
 #define DO_SENSOR_I2C_ADDRESS 		104
 
+/*
+ * Macro that enables or disables LoRaWAN Adaptive Data Rate (ADR)
+ * ADR optimizes data rates, airtime and energy consumption
+ * Should probably be enabled, except for specific cases
+ */
 #define ENABLE_ADR					1
-
-//#define PRINTBUF_SIZE   (40)
 
 /* USER CODE END PD */
 
@@ -76,13 +89,29 @@ SPI_HandleTypeDef hspi2;
 TIM_HandleTypeDef htim3;
 
 /* USER CODE BEGIN PV */
+
+/*
+ * Variable that stores the current tick
+ */
 static volatile uint32_t tick = 0;
 
+/*
+ * Structure that contains the Flash configuration for erasing
+ */
 FLASH_EraseInitTypeDef FlashEraseInit = {0};
-//I2Cx_Handle_t I2C1Handle;
 uint32_t flashError = 0;
+
+/*
+ * Variable that indicates if the microcontroller woke up from Standby Mode
+ * This is done by checking the Standby flag (SBF) in the Power status register 1 (PWR_SR1)
+ *
+ */
 uint8_t from_standby = 0;
 
+/*
+ * Variables that store the adc raw data found at TEMPCAL1ADDR and TEMPCAL2ADDR
+ * These will be corrected depending on the reference voltage used for the ADC
+ */
 float tempcal1;
 float tempcal2;
 
@@ -97,22 +126,17 @@ static void MX_ADC1_Init(void);
 static void MX_SPI2_Init(void);
 static void MX_I2C3_Init(void);
 /* USER CODE BEGIN PFP */
-void RTC_WakeupConfig();
-void MYPRINT(char *msg);
-uint8_t getSysTickActiveCounterFlag();
-//static void reportfunc(osjob_t* j);
 
+/*
+ * Function prototypes
+ */
+void RTC_WakeupConfig();
+//void MYPRINT(char *msg);
+uint8_t getSysTickActiveCounterFlag();
 void MCUTempInit();
 uint16_t readMCUTemp();
 uint8_t remove_decimal(char* pStr, char c);
 void readSensors(AtlasSensorData* pSample);
-//u2_t ReadTempSensor();
-//u2_t ReadTempSensorI2C();
-//u2_t ReadDOSensor();
-//u2_t ReadDOSensorI2C();
-//u2_t ReadpHSensor();
-//u2_t ReadpHSensorI2C();
-
 void WriteFlash(uint8_t data);
 void InitFlashErase();
 void SaveSession();
@@ -121,6 +145,12 @@ void RestoreSession();
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+/*
+ * LoRaWAN configuration
+ * Should be edited according to the information from The Things Network
+ */
+
 // This EUI must be in little-endian format, so least-significant-byte
 // first. When copying an EUI from ttnctl output, this means to reverse
 // the bytes. For TTN issued EUIs the last bytes should be 0xD5, 0xB3,
@@ -145,31 +175,60 @@ void os_getDevKey(u1_t *buf) {
 	memcpy(buf, APPKEY, 16);
 }
 
-//static char printbuf[PRINTBUF_SIZE];
-
+/*
+ * Array that stores the LoRaWAN packet payload
+ * In this case, this corresponds to the 4 variables read from the sensors
+ */
 static uint8_t loradata[LORA_MESSAGE_NUM_BYTES] = { 0 };
+
+/*
+ * TODO
+ */
 static uint8_t lora_port = 2;
 static uint8_t lora_confirmed = 0;
-static osjob_t sendjob;
-//static osjob_t reportjob;
 
+/*
+ * Structure for storing the LoRaWAN transmissions
+ */
+static osjob_t sendjob;
+
+/*
+ * This is the array where the tick, overflow and LoRaWAN session are stored before entering Standby mode
+ * A section of memory was reserved for user data. Check the STM32L476RGTXFLASH.ld file for details.
+ */
 __attribute__((__section__(".user_data"))) uint8_t userConfig[1024];
 const uint32_t LMIC_BYTE_SIZE = sizeof(LMIC);
-//const uint8_t TICK_BYTE_SIZE = 4;
 
-static uint16_t retry_interval = 60; // check for no pending jobs next secs to go to sleep
-static volatile uint8_t txcomplete = 0; // set, when tx done and ready for next sleep
+/*
+ * Go to sleep if there are no pending jobs for the next interval stored in this variable
+ */
+static uint16_t retry_interval = 60;
+
+/*
+ * Indicates when a transmission was completed
+ */
+static volatile uint8_t txcomplete = 0;
+
+/*
+ * The sleep period in seconds.
+ * Used to set the wakeup timer interrupt.
+ */
 const uint32_t SLEEP_SECONDS = 60;
 
+/*
+ * Pointers to the temperature sensor calibration data
+ */
 uint16_t *pTempCal1 = (uint16_t *) TEMPCAL1ADDR;
 uint16_t *pTempCal2 = (uint16_t *) TEMPCAL2ADDR;
 
-//No voy a cambiar esto porque dice que esta unused.
 // Pin mapping, unused in this implementation
 //Lo meti en el main.h
 const lmic_pinmap lmic_pins = { .nss = 6, .rxtx = LMIC_UNUSED_PIN, .rst = 5,
 		.dio = { 2, 3, LMIC_UNUSED_PIN }, };
 
+/*
+ * Schedules the next transmission, if possible.
+ */
 void do_send(osjob_t *j) {
 	lmic_tx_error_t error = 0;
 
@@ -201,6 +260,9 @@ void do_send(osjob_t *j) {
 	}
 }
 
+/*
+ * TODO: LoRaWAN Events
+ */
 void onEvent(ev_t ev) {
 	switch (ev) {
 	case EV_SCAN_TIMEOUT:
@@ -301,9 +363,7 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-  //Tocaria comentar el MX_RTC_Init() de abajo cada vez que se genere nuevo codigo con cubemx
-//  MX_RTC_Init();
-//  RTC_WakeupConfig();
+
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -339,38 +399,11 @@ int main(void)
 
   //	MYPRINT("Start LMIC\r\n");
 
-  //Probando I2C2
-//  char cmd[] = "R";
-//  uint8_t resp[7] = {0};
-////  uint8_t ready = 254;}
-//  uint8_t fallo = 0;
-//
-//  if (HAL_I2C_Master_Transmit(&hi2c2, PH_SENSOR_I2C_ADDRESS << 1, (uint8_t*) cmd, sizeof(cmd), 1000) != HAL_OK)
-//  {
-//		fallo = 1;
-//  }
-//  else
-//  {
-//	  HAL_Delay(800);
-//	  HAL_I2C_Master_Receive(&hi2c2, PH_SENSOR_I2C_ADDRESS << 1, resp, sizeof(resp), 1000);
-//  }
-
-  //Probando USART3
-//  u2_t DO = ReadDOSensor();
   HAL_GPIO_WritePin(USER_LED_GPIO_Port, USER_LED_Pin, GPIO_PIN_SET);
   AtlasSensorData sample = {0};
   readSensors(&sample);
 
-//  u2_t pH = ReadpHSensorI2C();
-//  u2_t DO = ReadDOSensorI2C();
-//  u2_t temp = ReadTempSensorI2C();
-//  u2_t temp = ReadTempSensor(); //cOMO ESTE no interfiere quizas lo puedo prender al mismo tiempo que otro o algo para optimizar el consumo.
-//  u2_t DO = 0;
-//  u2_t temp = 0;
-//  u2_t pH = 0;
-
   // LMIC init
-//  HAL_GPIO_WritePin(RFM95_CONTROL_GPIO_Port, RFM95_CONTROL_Pin, GPIO_PIN_RESET);
   os_init();
 
   // Reset the MAC state. Session and pending data transfers will be discarded.
@@ -381,25 +414,26 @@ int main(void)
 
   if(from_standby)
   {
+	  //Woke up from Standby mode
+
 	  //Restore session and send one measurement
 	  RestoreSession();
 
 	  //MYPRINT("Session restored...\r\n");
-
-//	  os_setCallback(&reportjob, &reportfunc);
-
-//	  reportfunc(&reportjob);
 
 //	  MYPRINT("Report queued...\r\n");
   }
   else
   {
 	  // settings
+
+	  //The internal RC clock is used here and the clock error is set to 5%
+	  //If other clocks are used, such as an external crystal oscillator, this error may be lower
 	  LMIC_setClockError(MAX_CLOCK_ERROR * 5 / 100);
 
-	  //Probando algo de un foro
+	  //Disable unavailable channels
+	  //TODO: Explicar este mejor que es importante
 
-	  //Aqui comienza la Prueba
 	  LMIC_selectSubBand(1);
 		//Disable FSB1, channels 0-7
 	  for(int i = 0; i < 7; i++)
@@ -420,22 +454,9 @@ int main(void)
 
 	  // Set data rate and transmit power for uplink (note: txpow seems to be ignored by the library)
 	  LMIC_setDrTxpow(DR_SF10, 14);
-
-	  //Aqui termina la prueba
   }
 
-//  if(!from_standby)
-//  {
-//	  do_send(&sendjob);
-//  }
-
-//  uint16_t mcuTemp = readMCUTemp();
-
-//  if (probeTemp > 25000)
-//  {
-//	MYPRINT("Dato raro.\r\n");
-//  }c
-
+  //TODO: Organizar mejor esto del loradata, quizas meterlo en un metodo?
   loradata[0] = (uint8_t) (sample.mcu_temperature >> 8);
   loradata[1] = (uint8_t) sample.mcu_temperature;
   loradata[2] = (uint8_t) (sample.temperature >> 8);
@@ -445,6 +466,7 @@ int main(void)
   loradata[6] = (uint8_t) (sample.dissolvedOxygen >> 8);
   loradata[7] = (uint8_t) sample.dissolvedOxygen;
 
+  //Schedules the next transmission with the obtained samples
   do_send(&sendjob);
 
   /* USER CODE END 2 */
@@ -463,21 +485,18 @@ int main(void)
 		{
 			if (txcomplete)
 			{
+				//TODO: Poner el codigo que vaya a standby mode.
+				//Seria chevere poner una macro para facilmente cambiar entre standby mode y delay
 	//				MYPRINT("Save session\r\n");
 
-				// save session and ticks+sleeptime
-	//	            eeprom_save(getTick() + 1000 * fence_vars.check_interval);
-
 	//				MYPRINT("Standby\r\n")*-/8-;
-				//TODO: Poner que se vaya a Standby
+
 	//			MYPRINT("Entering standby mode...\r\n");
 //				HAL_GPIO_WritePin(RFM95_CONTROL_GPIO_Port, RFM95_CONTROL_Pin, GPIO_PIN_SET);
 //				SaveSession();
 //				HAL_PWR_EnterSTANDBYMode();
 				HAL_GPIO_TogglePin(USER_LED_GPIO_Port, USER_LED_Pin);
 				HAL_Delay(1000);
-				/* Enable wake-up timer and enter in standby mode */
-	//			EnterStandbyMode();
 			}
 			else
 			{
@@ -485,14 +504,6 @@ int main(void)
 			}
 		}
 	}
-
-//	  HAL_GPIO_WritePin(USER_LED_GPIO_Port, USER_LED_Pin, GPIO_PIN_RESET);
-//	  HAL_Delay(2000);
-//	  HAL_GPIO_WritePin(USER_LED_GPIO_Port, USER_LED_Pin, GPIO_PIN_SET);
-//	  AtlasSensorData sample = {0};
-//	  readSensors(&sample);
-//  }
-
   /* USER CODE END 3 */
 }
 
@@ -856,10 +867,14 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
-void MYPRINT(char *msg) {
+//void MYPRINT(char *msg) {
 //	HAL_UART_Transmit(&huart3, (uint8_t*) msg, strlen(msg) + 1, HAL_MAX_DELAY); //TODO: Revisar lo del timeout
-}
+//}
 
+/*
+ * Configures the system tick interrupt
+ * Should increase every 1ms
+ */
 HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority) {
 	/*Configure the SysTick to have interrupt in 1ms time basis*/
 	HAL_SYSTICK_Config(SystemCoreClock / 1000);
@@ -871,11 +886,15 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority) {
 	return HAL_OK;
 }
 
+/*
+ * Obtains the current microseconds
+ */
 uint32_t getCurrentMicro(void)
 {
   /* Ensure COUNTFLAG is reset by reading SysTick control and status register */
 //  LL_SYSTICK_IsActiveCounterFlag();
-  //por ahora yo, mirar si la HAL tiene algo para esto
+
+  //TODO: Revisar porque se hace doble este codigo
   getSysTickActiveCounterFlag();
 
   //Porque se hace esto 2 veces?
@@ -890,21 +909,19 @@ uint32_t getCurrentMicro(void)
   return ( m * 1000 + (u * 1000) / SysTick->LOAD);
 }
 
-
+/*
+ * TODO: Acordarme esto que hacia
+ */
 uint8_t getSysTickActiveCounterFlag()
 {
 	return ((SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk) == (SysTick_CTRL_COUNTFLAG_Msk));
 }
 
-//static void reportfunc(osjob_t* j)
-//{
-//	u2_t val = ReadTempSensor();
-//	LMIC.frame[0] = val >> 8;
-//	LMIC.frame[1] = val;
-//
-//	LMIC_setTxData2(1, LMIC.frame, 2, 0);
-//}
-
+/*
+ * Removes the character indicated in the parameter c from the array indicated by the pointer pStr.
+ * Used to remove the dot character from the received sensor values
+ * Returns the location of the dot character. However, this is unused.
+ */
 uint8_t remove_decimal(char* pStr, char c)
 {
 	char *pr = pStr, *pw = pStr;
@@ -930,16 +947,24 @@ uint8_t remove_decimal(char* pStr, char c)
 	return loc;
 }
 
+/*
+ * Reads the raw ADC temperature sensor calibration values and adjusts for the difference in voltage reference values.
+ * Here, the reference voltage used is 3.3V. This should be edited if the reference voltage changes.
+ * TODO: Quizas poner una macro? No podria probar que funciona...
+ */
 void MCUTempInit()
 {
 	tempcal1 = (float) (*pTempCal1)*(3/3.3f);
 	tempcal2 = (float) (*pTempCal2)*(3/3.3f);
 }
 
+/*
+ * Reads the internal microcontroller temperature.
+ * Returns the value as an unsigned integer. The correct temperature value can be recovered by dividing by 1000.
+ * This is done to reduce the size of the variable by 2 bytes.
+ */
 uint16_t readMCUTemp()
 {
-	//TODO: Poner esto arriba como constante
-
 	HAL_ADC_Start(&hadc1);
 	while(HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY) != HAL_OK);
 
@@ -949,6 +974,12 @@ uint16_t readMCUTemp()
 	return (uint16_t) (temp*1000);
 }
 
+/*
+ * Reads the values from each sensor.
+ * The sensor circuits must be in I2C mode with a correct I2C address assigned.
+ * After reading, the decimal character is removed and the values are stored as unsigned integers to reduce the variable size for transmission.
+ * The correct values can be recovered by dividing by 1000. This is done, in this case, by the payload formatter in The Things Network.
+ */
 void readSensors(AtlasSensorData* pSample)
 {
 	uint16_t mcuTemp = readMCUTemp();
@@ -966,33 +997,32 @@ void readSensors(AtlasSensorData* pSample)
 
 	HAL_Delay(1500);
 
-	uint8_t fallo_temp = HAL_I2C_Master_Transmit(&hi2c3, TEMP_SENSOR_I2C_ADDRESS << 1, (uint8_t*) cmd, sizeof(cmd), 1000) != HAL_OK;
-	uint8_t fallo_do = HAL_I2C_Master_Transmit(&hi2c3, DO_SENSOR_I2C_ADDRESS << 1, (uint8_t*) cmd, sizeof(cmd), 1000) != HAL_OK;
-	uint8_t fallo_pH = HAL_I2C_Master_Transmit(&hi2c3, PH_SENSOR_I2C_ADDRESS << 1, (uint8_t*) cmd, sizeof(cmd), 1000) != HAL_OK;
+	uint8_t temp_fail = HAL_I2C_Master_Transmit(&hi2c3, TEMP_SENSOR_I2C_ADDRESS << 1, (uint8_t*) cmd, sizeof(cmd), 1000) != HAL_OK;
+	uint8_t do_fail = HAL_I2C_Master_Transmit(&hi2c3, DO_SENSOR_I2C_ADDRESS << 1, (uint8_t*) cmd, sizeof(cmd), 1000) != HAL_OK;
+	uint8_t pH_fail = HAL_I2C_Master_Transmit(&hi2c3, PH_SENSOR_I2C_ADDRESS << 1, (uint8_t*) cmd, sizeof(cmd), 1000) != HAL_OK;
 
 	HAL_Delay(1500);
 
-	if(!fallo_temp)
+	if(!temp_fail)
 	{
 		HAL_I2C_Master_Receive(&hi2c3, TEMP_SENSOR_I2C_ADDRESS << 1, temp_buffer, sizeof(temp_buffer), 1000);
 	}
 
-	if(!fallo_do)
+	if(!do_fail)
 	{
 		HAL_I2C_Master_Receive(&hi2c3, DO_SENSOR_I2C_ADDRESS << 1, do_buffer, sizeof(do_buffer), 1000);
 	}
 
-	if(!fallo_pH)
+	if(!pH_fail)
 	{
 		HAL_I2C_Master_Receive(&hi2c3, PH_SENSOR_I2C_ADDRESS << 1, pH_buffer, sizeof(pH_buffer), 1000);
 	}
 
-	//TODO: Probar el cast a pointer char
 	uint8_t decloc_temp = remove_decimal( (char*) (temp_buffer+1), '.');
 	uint8_t decloc_do = remove_decimal( (char*) (do_buffer+1), '.');
 	uint8_t decloc_pH = remove_decimal( (char*) (pH_buffer+1), '.');
 
-	//Esto es para ignorar el warning de que los decloc no se esta usando.
+	//Avoids the unused warnings
 	UNUSED(decloc_temp);
 	UNUSED(decloc_do);
 	UNUSED(decloc_pH);
@@ -1001,306 +1031,15 @@ void readSensors(AtlasSensorData* pSample)
 	pSample->dissolvedOxygen = atoi( (const char*) (do_buffer+1));
 	pSample->pH = atoi( (const char*) (pH_buffer+1));
 
-	if(pSample->temperature > 25000)
-	{
-		pSample->temperature = 50000;
-	}
-
 	HAL_GPIO_WritePin(SENSORS_PWR_GPIO_Port, SENSORS_PWR_Pin, GPIO_PIN_RESET);
 }
 
-//u2_t ReadpHSensorI2C()
-//{
-//	//TODO: Revisar esto, a veces falla la lectura y se queda trabado.
-//	//Por ahora le alargo los Delays, pero hacerlo mejor como detectando el error
-//	//o con un timeout.
-//
-//	char cmd[] = "R";
-//	uint8_t buffer[7] = {0};
-//	//  uint8_t ready = 254;
-//	uint8_t fallo = 0;
-//
-//	HAL_GPIO_WritePin(PH_CONTROL_GPIO_Port, PH_CONTROL_Pin, GPIO_PIN_SET);
-//	HAL_Delay(1200);
-//
-//	if (HAL_I2C_Master_Transmit(&hi2c2, PH_SENSOR_I2C_ADDRESS << 1, (uint8_t*) cmd, sizeof(cmd), 1000) != HAL_OK)
-//	{
-//		fallo = 1;
-//	}
-//	else
-//	{
-//	  HAL_Delay(800);
-//	  HAL_I2C_Master_Receive(&hi2c2, PH_SENSOR_I2C_ADDRESS << 1, buffer, sizeof(buffer), 1000);
-//	}
-//
-//	HAL_GPIO_WritePin(PH_CONTROL_GPIO_Port, PH_CONTROL_Pin, GPIO_PIN_RESET);
-//
-//	//TODO: Probar el cast a pointer char
-//	uint8_t dec_loc = remove_decimal( (char*) (buffer+1), '.');
-//
-//	//Esto es para ignorar el warning de que dec_loc no se esta usando.
-//	UNUSED(dec_loc);
-//
-//	u2_t val = atoi( (const char*) (buffer+1));
-//
-//	return val;
-//}
-
-//u2_t ReadpHSensor()
-//{
-//	//TODO: Revisar esto, a veces falla la lectura y se queda trabado.
-//	//Por ahora le alargo los Delays, pero hacerlo mejor como detectando el error
-//	//o con un timeout.
-//
-//	char cmd[] = "R\r";
-//	uint8_t initbuffer[11] = {0};
-//	uint8_t buffer[10] = {0};
-//
-//	HAL_UART_DeInit(&huart3);
-//	MX_USART3_UART_Init();
-//
-//	HAL_GPIO_DeInit(GPIOC, GPIO_PIN_4 | GPIO_PIN_5);
-//
-//	GPIO_InitTypeDef GPIO_InitStruct;
-//
-//	GPIO_InitStruct.Pin = GPIO_PIN_10 | GPIO_PIN_11;
-//	GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
-//	GPIO_InitStruct.Pull = GPIO_NOPULL;
-//	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-//	HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-//
-//	GPIO_InitStruct.Pin = GPIO_PIN_10 | GPIO_PIN_11;
-//	GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-//	GPIO_InitStruct.Pull = GPIO_NOPULL;
-//	GPIO_InitStruct.Alternate = GPIO_AF7_USART3;
-//	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-//	HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-//
-//	HAL_GPIO_WritePin(PH_CONTROL_GPIO_Port, PH_CONTROL_Pin, GPIO_PIN_SET);
-//
-//	//Cambiar esto por algo que espere a que llegue *RE\r
-//	HAL_UART_Receive(&huart3, initbuffer, sizeof(initbuffer), 1000);
-//
-//	//Leer dato de temp sensor
-//	HAL_UART_Transmit(&huart3, (uint8_t*) cmd, strlen(cmd), 1000);
-//	__HAL_UART_CLEAR_OREFLAG(&huart3);
-//	HAL_UART_Receive(&huart3, buffer, sizeof(buffer), 1000);
-//
-//	HAL_GPIO_WritePin(PH_CONTROL_GPIO_Port, PH_CONTROL_Pin, GPIO_PIN_RESET);
-//
-//	//TODO: Probar el cast a pointer char
-//	uint8_t dec_loc = remove_decimal( (char*) buffer, '.');
-//
-//	//Esto es para ignorar el warning de que dec_loc no se esta usando.
-//	UNUSED(dec_loc);
-//
-//	u2_t val = atoi( (const char*) buffer);
-//
-////	if (val == 25576)
-////	{
-////		val = val;
-////	}
-//
-//	return val;
-//}
-
-//u2_t ReadTempSensorI2C()
-//{
-//	//TODO: Revisar esto, a veces falla la lectura y se queda trabado.
-//	//Por ahora le alargo los Delays, pero hacerlo mejor como detectando el error
-//	//o con un timeout.
-//
-//	char cmd[] = "R";
-//	uint8_t buffer[8] = {0};
-//	//  uint8_t ready = 254;
-//	uint8_t fallo = 0;
-//
-//	HAL_GPIO_WritePin(DO_CONTROL_GPIO_Port, DO_CONTROL_Pin, GPIO_PIN_SET);
-//
-//	if (HAL_I2C_Master_Transmit(&hi2c2, TEMP_SENSOR_I2C_ADDRESS << 1, (uint8_t*) cmd, sizeof(cmd), 1000) != HAL_OK)
-//	{
-//		fallo = 1;
-//	}
-//	else
-//	{
-//	  HAL_Delay(800);
-//	  HAL_I2C_Master_Receive(&hi2c2, TEMP_SENSOR_I2C_ADDRESS << 1, buffer, sizeof(buffer), 1000);
-//	}
-//
-//	HAL_GPIO_WritePin(DO_CONTROL_GPIO_Port, DO_CONTROL_Pin, GPIO_PIN_RESET);
-//
-//	//TODO: Probar el cast a pointer char
-//	uint8_t dec_loc = remove_decimal( (char*) (buffer+1), '.');
-//
-//	//Esto es para ignorar el warning de que dec_loc no se esta usando.
-//	UNUSED(dec_loc);
-//
-//	u2_t val = atoi( (const char*) (buffer+1));
-//
-//	return val;
-//}
-
-
-//u2_t ReadTempSensor()
-//{
-//	//TODO: Revisar esto, a veces falla la lectura y se queda trabado.
-//	//Por ahora le alargo los Delays, pero hacerlo mejor como detectando el error
-//	//o con un timeout.
-//
-//	char cmd[] = "R\r";
-//	uint8_t initbuffer[11] = {0};
-//	uint8_t buffer[10] = {0};
-//
-//	HAL_UART_DeInit(&huart3);
-//	MX_USART3_UART_Init();
-//
-//	HAL_GPIO_DeInit(GPIOB, GPIO_PIN_10 | GPIO_PIN_11);
-////	HAL_GPIO_DeInit(GPIOC, GPIO_PIN_10 | GPIO_PIN_11);
-//
-//	GPIO_InitTypeDef GPIO_InitStruct;
-//
-//	GPIO_InitStruct.Pin = GPIO_PIN_10 | GPIO_PIN_11;
-//	GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
-//	GPIO_InitStruct.Pull = GPIO_NOPULL;
-//	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-//	HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-//
-//	GPIO_InitStruct.Pin = GPIO_PIN_4 | GPIO_PIN_5;
-//	GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-//	GPIO_InitStruct.Pull = GPIO_NOPULL;
-//	GPIO_InitStruct.Alternate = GPIO_AF7_USART3;
-//	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-//	HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-//
-//	HAL_GPIO_WritePin(TEMP_CONTROL_GPIO_Port, TEMP_CONTROL_Pin, GPIO_PIN_SET);
-//
-//	//Cambiar esto por algo que espere a que llegue *RE\r
-//	HAL_UART_Receive(&huart3, initbuffer, sizeof(initbuffer), 1000);
-//
-//	//Leer dato de ph sensor
-//	HAL_UART_Transmit(&huart3, (uint8_t*) cmd, strlen(cmd), 1000);
-//	__HAL_UART_CLEAR_OREFLAG(&huart3);
-//	HAL_UART_Receive(&huart3, buffer, sizeof(buffer), 1000);
-//
-//	HAL_GPIO_WritePin(TEMP_CONTROL_GPIO_Port, TEMP_CONTROL_Pin, GPIO_PIN_RESET);
-//
-//	//TODO: Probar el cast a pointer char
-//	uint8_t dec_loc = remove_decimal( (char*) buffer, '.');
-//
-//	//Esto es para ignorar el warning de que dec_loc no se esta usando.
-//	UNUSED(dec_loc);
-//
-//	u2_t val = atoi( (const char*) buffer);
-//
-//	return val;
-//}
-
-//u2_t ReadDOSensorI2C()
-//{
-//	//TODO: Revisar esto, a veces falla la lectura y se queda trabado.
-//	//Por ahora le alargo los Delays, pero hacerlo mejor como detectando el error
-//	//o con un timeout.
-//
-//	char cmd[] = "R";
-//	uint8_t buffer[7] = {0};
-//	//  uint8_t ready = 254;
-//	uint8_t fallo = 0;
-//
-//	HAL_GPIO_WritePin(DO_CONTROL_GPIO_Port, DO_CONTROL_Pin, GPIO_PIN_SET);
-//	HAL_Delay(1200);
-//
-//	if (HAL_I2C_Master_Transmit(&hi2c2, DO_SENSOR_I2C_ADDRESS << 1, (uint8_t*) cmd, sizeof(cmd), 1000) != HAL_OK)
-//	{
-//		fallo = 1;
-//	}
-//	else
-//	{
-//	  HAL_Delay(800);
-//	  HAL_I2C_Master_Receive(&hi2c2, DO_SENSOR_I2C_ADDRESS << 1, buffer, sizeof(buffer), 1000);
-//	}
-//
-//	HAL_GPIO_WritePin(DO_CONTROL_GPIO_Port, DO_CONTROL_Pin, GPIO_PIN_RESET);
-//
-//	//TODO: Probar el cast a pointer char
-//	uint8_t dec_loc = remove_decimal( (char*) (buffer+1), '.');
-//
-//	//Esto es para ignorar el warning de que dec_loc no se esta usando.
-//	UNUSED(dec_loc);
-//
-//	u2_t val = atoi( (const char*) (buffer+1));
-//
-//	return val;
-//}
-
-//u2_t ReadDOSensor()
-//{
-//	//TODO: Revisar esto, a veces falla la lectura y se queda trabado.
-//	//Por ahora le alargo los Delays, pero hacerlo mejor como detectando el error
-//	//o con un timeout.
-//	//I2C address = 104
-//	HAL_UART_DeInit(&huart3);
-//	MX_USART3_UART_Init();
-//
-//	HAL_GPIO_DeInit(GPIOB, GPIO_PIN_10 | GPIO_PIN_11);
-//	HAL_GPIO_DeInit(GPIOC, GPIO_PIN_4 | GPIO_PIN_5);
-//
-//	GPIO_InitTypeDef GPIO_InitStruct;
-//
-//	GPIO_InitStruct.Pin = GPIO_PIN_10 | GPIO_PIN_11;
-//	GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-//	GPIO_InitStruct.Pull = GPIO_NOPULL;
-//	GPIO_InitStruct.Alternate = GPIO_AF7_USART3;
-//	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-//	HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-//
-//	char cmd[] = "I2C,102\r";
-//	uint8_t initbuffer[11] = {0};
-//	uint8_t buffer[9] = {0};
-//
-//	//Cambiar los pines Tx/Rx a PC10/PC11
-////	GPIOB->MODER |= (0x3 << 20) | (0x3 << 22); //Set PB10/PB11 pins as Analog
-////	GPIOC->MODER |= (0x3 << 8) | (0x3 << 10); //Set PC4/PC5 pins as Analog
-////
-////	//Set PC10/PC11 as Alternate Functionality
-////	GPIOC->MODER |= (0x1 << 21) | (0x1 << 23);
-////	GPIOC->MODER &= (~(0x1 << 20)) & (~(0x1 << 22));
-////
-////	//Set AF7 for pins PC10/PC11
-////	GPIOC->AFR[1] |= (0x7 << 8) | (0x7 << 12);
-//
-//	HAL_GPIO_WritePin(DO_CONTROL_GPIO_Port, DO_CONTROL_Pin, GPIO_PIN_SET);
-//
-//	//Cambiar esto por algo que espere a que llegue *RE\r
-//	HAL_UART_Receive(&huart3, initbuffer, sizeof(initbuffer), 1000);
-//
-//	//Leer dato de do sensor
-//	HAL_UART_Transmit(&huart3, (uint8_t*) cmd, strlen(cmd), 1000);
-//	__HAL_UART_CLEAR_OREFLAG(&huart3);
-//	HAL_UART_Receive(&huart3, buffer, sizeof(buffer), 1000);
-//
-//	HAL_GPIO_WritePin(DO_CONTROL_GPIO_Port, DO_CONTROL_Pin, GPIO_PIN_RESET);
-//
-//	GPIO_InitStruct.Pin = GPIO_PIN_10 | GPIO_PIN_11;
-//	GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
-//	GPIO_InitStruct.Pull = GPIO_NOPULL;
-//	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-//	HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
-//
-//	//TODO: Probar el cast a pointer char
-//	uint8_t dec_loc = remove_decimal( (char*) buffer, '.');
-//
-//	//Esto es para ignorar el warning de que dec_loc no se esta usando.
-//	UNUSED(dec_loc);
-//
-//	u2_t val = atoi( (const char*) buffer);
-//
-//	return val;
-//}
-
+/*
+ * Configures the wakeup timer interrupt according to the sleep period indicated in SLEEP_SECONDS.
+ * An additional second is substracted to correct for initialization time.
+ */
 void RTC_WakeupConfig()
 {
-	//Setup Wakeup timer
-	//uint32_t sleep_seconds = SLEEP_MINUTES*60;
 	//Substracting an additional second because of the initialization time.
 	if (HAL_RTCEx_SetWakeUpTimer_IT(&hrtc, SLEEP_SECONDS - 1 - 1, RTC_WAKEUPCLOCK_CK_SPRE_16BITS) != HAL_OK)
 		{
@@ -1309,6 +1048,10 @@ void RTC_WakeupConfig()
 	//	MYPRINT("RTC configured.\r\n");
 }
 
+/*
+ * Function called when the wakeup interrupt occurs.
+ * Reconfigures the wakeup timer, reads the sensors and schedules the next LoRaWAN transmission.
+ */
 void HAL_RTCEx_WakeUpTimerEventCallback(RTC_HandleTypeDef *hrtc)
 {
 //	MYPRINT("Wakeup Triggered.\r\n");
@@ -1330,9 +1073,11 @@ void HAL_RTCEx_WakeUpTimerEventCallback(RTC_HandleTypeDef *hrtc)
 	loradata[7] = (uint8_t) sample.dissolvedOxygen;
 
 	do_send(&sendjob);
-//	os_setCallback(&reportjob, &reportfunc);
 }
 
+/*
+ * Sets the flash information for erasing
+ */
 void InitFlashErase()
 {
 	FlashEraseInit.TypeErase = FLASH_TYPEERASE_PAGES;
@@ -1341,33 +1086,40 @@ void InitFlashErase()
 	FlashEraseInit.NbPages = 64;
 }
 
-//Funcion para guardar la Tick actual + el tiempo de sleep y el LMIC
+/*
+ * Stores the current tick (adjusted with the sleep period), the overflow and the LMIC structure in the Flash memory.
+ * This is important, because the microcontroller must load this information after waking up from Standby mode to transmit data.
+ *
+ * This is not the best solution. Depending on the sleep period, the Flash memory may quickly degrade and
+ * fail. A better solution involves using EEPROM memory. However, the current STM32L476RG microcontroller
+ * doesn't include EEPROM. Thus, a different microcontroller would have to be used that includes EEPROM memory
+ * or an external EEPROM chip should be included. 1KB should be enough to store this information.
+ */
 void SaveSession()
 {
-	//1. Desbloquear la flash y borrar las paginas 448-511 para permitir escribir la sesion
+	//1. Unlock the flash and erase pages 448-551
 	HAL_FLASH_Unlock();
 	__HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR | FLASH_FLAG_PGAERR | FLASH_FLAG_PGSERR );
 	HAL_FLASHEx_Erase(&FlashEraseInit, &flashError);
 
-	//2. Guardar la tick actual
+	//2. Store the current tick + the amount of ticks that would occur during the sleep period.
+	//Since SLEEP_SECONDS is in seconds and each tick occurs every 1ms, this amount is SLEEP_SECONDS*1000
 	if(HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, (uint32_t) (userConfig), tick + SLEEP_SECONDS*1000) != HAL_OK)
 	{
 		Error_Handler();
 	}
 
-	//3. Guardar el overflow
-
+	//3. Saves the overflow
 	if(HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, (uint32_t) (userConfig+8), hal_get_overflow()) != HAL_OK)
 	{
 		Error_Handler();
 	}
 
-	//4. Guardar LMIC
+	//4. Saves the LMIC structure containing the LMIC information
 	uint64_t* pLMIC = (uint64_t*) &LMIC;
 
 	uint32_t i = 16;
 
-	//TODO: Revisar este while. Yo creo que esta iterando muchas mas veces de las necesarias
 	while(i < LMIC_BYTE_SIZE + 16)
 	{
 		if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_DOUBLEWORD, (uint32_t) (userConfig+i), *pLMIC) != HAL_OK)
@@ -1379,44 +1131,33 @@ void SaveSession()
 	}
 }
 
-//Funcion para restaurar la sesion despues de despertar
+/*
+ * Loads the stored session from the Flash memory
+ */
 void RestoreSession()
 {
 	tick = *((uint32_t*)(userConfig));
 
-	//TODO: Probar esto.
 	hal_set_overflow(*(uint8_t*) (userConfig+8));
 
 	LMIC = *((struct lmic_t*) (userConfig+16));
-
-	//Esto es un fix por ahora para mirar el error que tengo
-	//No se bien que es el error. Algo tiene que ver con lo de MAC.
-//	LMIC.opmode &= ~OP_TXRXPEND;
 }
 
+/*
+ * Increases the tick
+ */
 void HAL_IncTick(void)
 {
 	tick += (uint32_t) uwTickFreq;
 }
 
+/*
+ * Returns the current tick
+ */
 uint32_t HAL_GetTick(void)
 {
 	return tick;
 }
-//
-
-//void ResumeRunMode(void)
-//{
-//	SystemClock_Config();
-//
-//	HAL_RTCEx_DeactivateWakeUpTimer(&hrtc);
-//
-//	//No estoy seguro de esta parte.
-//	MX_GPIO_Init();
-//	MX_USART2_UART_Init();
-//	MX_SPI1_Init();
-//	MX_TIM3_Init();
-//}
 
 /* USER CODE END 4 */
 

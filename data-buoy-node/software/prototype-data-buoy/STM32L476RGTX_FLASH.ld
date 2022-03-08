@@ -178,7 +178,7 @@ SECTIONS
 
   .ARM.attributes 0 : { *(.ARM.attributes) }
   
-  /* User data section. Esto lo agregue yo. Ver: https://stackoverflow.com/questions/28503808/allocating-memory-in-flash-for-user-data-stm32f4-hal */
+  /* User data section. See: https://stackoverflow.com/questions/28503808/allocating-memory-in-flash-for-user-data-stm32f4-hal */
   .user_data :
   {
   	. = ALIGN(4);
