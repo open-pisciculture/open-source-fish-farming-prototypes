@@ -9,6 +9,7 @@ Here supporting information common to various prototypes can be found.
 - Deployment of AWS services
 
 ## Setting up the LoRaWAN Gateway with The Things Network
+The Gateway used for this prototype is [this one](https://www.sparkfun.com/products/16447). First, make sure to follow the Getting Started Guide available under the Documents tab in the [Sparkfun website](https://cdn.sparkfun.com/assets/8/3/6/d/4/Getting_Started_Guide_for_RAK7244_V1.0.pdf).
 
 ## Creating devices in The Things Network
 
