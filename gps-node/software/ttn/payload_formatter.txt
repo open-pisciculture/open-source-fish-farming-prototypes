@@ -1,0 +1,41 @@
+function Decoder(bytes, port) {
+  if (bytes.length === 10) {
+    var buf1 = new ArrayBuffer(4);
+    var buf2 = new ArrayBuffer(4);
+    
+    var view1 = new DataView(buf1);
+    var view2 = new DataView(buf2);
+    
+    data1 = bytes.slice(0, 4).reverse();
+    data2 = bytes.slice(4, 8).reverse();
+    
+    data1.forEach(function (b, i) 
+    {
+      view1.setUint8(i, b);
+    });
+    
+    data2.forEach(function (b, i) 
+    {
+      view2.setUint8(i, b);
+    });
+    
+    var latitude = view1.getFloat32(0);
+    var longitude = view2.getFloat32(0);
+    var ns = bytes[8];
+    var ew = bytes[9];
+    
+    return {
+      'latitude': latitude,
+      'longitude': longitude,
+      'ns': ns,
+      'ew': ew,
+      
+    }
+  } else {
+    var message = "Got " + String(bytes.length) + " bytes: " + String(bytes)
+    return {
+      'latitude': message,
+      'longitude': message,
+    }
+  }
+}
