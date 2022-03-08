@@ -28,6 +28,10 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+
+/*
+ * Structure for storing the gps information received
+ */
 typedef struct {
 	float latitude ;
 	float longitude;
@@ -40,12 +44,22 @@ typedef struct {
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+
+/*  Lora message structure, 10 bytes long
+ *  Bytes 3-0:		latitude
+ *  Bytes 7-4:		longitude
+ *  Byte 8:			North or South
+ *  Byte 9:			East or West
+ */
 #define LORA_MESSAGE_NUM_BYTES      10
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-//Choose Spreading Factor with this macro.
+
+/*
+ * Choose the LoRa Spreading Factor with this macro.
+ */
 #define LORA_SF 					DR_SF7
 /* USER CODE END PM */
 
@@ -60,16 +74,27 @@ UART_HandleTypeDef huart3;
 /* USER CODE BEGIN PV */
 
 /*
- * GPS PV
+ * Stores the current index in the GPS buffer
  */
 uint32_t RxIndex = 0;
+
+/*
+ * The current data received from the GPS
+ */
 uint8_t RxData = 0;
+
+/*
+ * Stores all the data received by the GPS
+ */
 uint8_t GPSBuffer[100] = {0};
 
+/*
+ * Variable for storing the GPS information received.
+ */
 GPS gps = {0};
 
 /*
- * LoRaWAN PV
+ * Stores the current tick
  */
 static volatile uint32_t tick = 0;
 
@@ -85,19 +110,29 @@ static void MX_TIM3_Init(void);
 /* USER CODE BEGIN PFP */
 
 /*
- * GPS PFP
+ * GPS private function prototypes
  */
 void SaveGPSData();
 
 /*
- * LoRaWAN PFP
+ * LoRaWAN private function prototypes
  */
 uint8_t getSysTickActiveCounterFlag();
+
+/*
+ * Other private function prototypes
+ */
 void MYPRINT(char *);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+/*
+ * LoRaWAN configuration
+ * Should be edited according to the information from The Things Network
+ */
+
 // This EUI must be in little-endian format, so least-significant-byte
 // first. When copying an EUI from ttnctl output, this means to reverse
 // the bytes. For TTN issued EUIs the last bytes should be 0xD5, 0xB3,
@@ -121,17 +156,42 @@ void os_getDevKey(u1_t *buf) {
 	memcpy(buf, APPKEY, 16);
 }
 
+/*
+ * Array that stores the LoRaWAN packet payload
+ * In this case corresponds to the GPS information.
+ */
 static uint8_t loradata[LORA_MESSAGE_NUM_BYTES] = { 0 };
+
+/*
+ * TODO: Llenar esto del port y el confirmed bien
+ */
 static uint8_t lora_port = 2;
 static uint8_t lora_confirmed = 0;
+
+/*
+ * Structure for storing the LoRaWAN transmissions
+ */
 static osjob_t sendjob;
 
-static uint16_t retry_interval = 1; // check for no pending jobs next secs to go to sleep
-static volatile uint8_t txcomplete = 0; // set, when tx done and ready for next sleep
+/*
+ * TODO: Este del retry interval no se si se usa aqui
+ */
+static uint16_t retry_interval = 1;
 
+/*
+ * Indicates if a transmission was completed
+ */
+static volatile uint8_t txcomplete = 0;
+
+/*
+ * Pin mapping, unused in this implementation
+ */
 const lmic_pinmap lmic_pins = { .nss = 6, .rxtx = LMIC_UNUSED_PIN, .rst = 5,
 		.dio = { 2, 3, LMIC_UNUSED_PIN }, };
 
+/*
+ * Schedules the next transmission, if possible.
+ */
 void do_send(osjob_t *j) {
 	lmic_tx_error_t error = 0;
 
@@ -163,6 +223,9 @@ void do_send(osjob_t *j) {
 	}
 }
 
+/*
+ * TODO: LoRaWAN Events
+ */
 void onEvent(ev_t ev) {
 	switch (ev) {
 	case EV_SCAN_TIMEOUT:
@@ -284,7 +347,7 @@ int main(void)
   LMIC_setClockError(MAX_CLOCK_ERROR * 5 / 100);
   txcomplete = 0;
 
-  //Probando algo de un foro
+  //TODO: lo de los subchannels llenarlo bien
 
   //Aqui comienza la Prueba
   LMIC_selectSubBand(1);
@@ -302,16 +365,12 @@ int main(void)
 	  LMIC_disableChannel(i);
   }
 
+  //Adaptive Data Rate is disabled for this prototype
   LMIC_setAdrMode(0);
   LMIC.dn2Dr = LORA_SF;
 
   // Set data rate and transmit power for uplink (note: txpow seems to be ignored by the library)
   LMIC_setDrTxpow(LORA_SF, 14);
-
-  //Aqui termina la prueba
-
-//  loradata[0] = 10;
-//  do_send(&sendjob);
 
   GPSInit();
   /* USER CODE END 2 */
@@ -321,7 +380,7 @@ int main(void)
   while (1)
   {
 	  os_runloop_once();
-	  /* when no jobs pending and not joining, go to standby */
+	  /* when no jobs are pending and not joining, toggle led */
 	  if (!os_queryTimeCriticalJobs(sec2osticks(retry_interval)) && !(LMIC.opmode & OP_JOINING) && !(LMIC.opmode & OP_TXRXPEND))
 	  {
 		  if (txcomplete) {
@@ -616,6 +675,13 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 
+/*
+ * Callback that stores the data recieved from the GPS module into the GPSBuffer
+ *
+ * The character '$' indicates the beginning. The RxIndex is reset to 0 in this case and the GPSBuffer is overwritten. Information continues to be received from the GPS module.
+ * The character '\n' indicates the end. Coordinates are retrieved from the buffer and GPS module data reception is disabled until the user button is pressed.
+ * For other characters the data is saved in the buffer and information continues to be received from the GPS module.
+ */
 void UART_GPS_Handler()
 {
 	if (RxData == '$')
@@ -628,7 +694,6 @@ void UART_GPS_Handler()
 	{
 		RxIndex++;
 		GPSBuffer[RxIndex] = RxData;
-		//TODO: que guarde lo que recibio en el struct
 		SaveGPSData();
 	}
 	else
@@ -639,6 +704,9 @@ void UART_GPS_Handler()
 	}
 }
 
+/*
+ * Initializes the GPS data reception, disables the user button and turns the user led on.
+ */
 void GPSInit()
 {
 	HAL_NVIC_DisableIRQ(EXTI15_10_IRQn);
@@ -649,11 +717,20 @@ void GPSInit()
 	HAL_UART_Receive_IT(&huart3, &RxData, 1);
 }
 
+/*
+ * Begins GPS data reception.
+ */
 void GPSRetry()
 {
 	HAL_UART_Receive_IT(&huart3, &RxData, 1);
 }
 
+/*
+ * Checks the GPS buffer for the $GPGLL message.
+ * If $GPGLL was received, the latitude, longitude, north/south and east/west coordinates are saved to the LoRaWAN payload array and tranmission is scheduled.
+ * If any other type of message was received or the $GPGLL message was incorrectly read, the GPS buffer is discarded and GPS data reception continues until
+ * the $GPGLL message is correctly received.
+ */
 void SaveGPSData()
 {
 	if (!strncmp((char *) GPSBuffer, "$GPGLL", 6))
@@ -686,11 +763,18 @@ void SaveGPSData()
 	}
 }
 
+/*
+ * Function for printing messages using the USART2 peripheral.
+ */
 void MYPRINT(char *msg) {
 	HAL_UART_Transmit(&huart2, (uint8_t*) msg, strlen(msg) + 1,
 	HAL_MAX_DELAY); //TODO: Revisar lo del timeout
 }
 
+/*
+ * Configures the system tick interrupt
+ * Should increase every 1ms
+ */
 HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority) {
 	/*Configure the SysTick to have interrupt in 1ms time basis*/
 	HAL_SYSTICK_Config(SystemCoreClock / 1000);
@@ -702,14 +786,16 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority) {
 	return HAL_OK;
 }
 
+/*
+ * Obtains the current microseconds
+ */
 uint32_t getCurrentMicro(void)
 {
   /* Ensure COUNTFLAG is reset by reading SysTick control and status register */
 //  LL_SYSTICK_IsActiveCounterFlag();
-  //por ahora yo, mirar si la HAL tiene algo para esto
   getSysTickActiveCounterFlag();
 
-  //Porque se hace esto 2 veces?
+  //TODO: Revisar porque hice doble este codigo
   uint32_t m = HAL_GetTick();
   uint32_t u = SysTick->LOAD - SysTick->VAL;
 
@@ -721,16 +807,25 @@ uint32_t getCurrentMicro(void)
   return ( m * 1000 + (u * 1000) / SysTick->LOAD);
 }
 
+/*
+ * TODO: Acordarme esto que hacia
+ */
 uint8_t getSysTickActiveCounterFlag()
 {
 	return ((SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk) == (SysTick_CTRL_COUNTFLAG_Msk));
 }
 
+/*
+ * Increases the tick
+ */
 void HAL_IncTick(void)
 {
 	tick += (uint32_t) uwTickFreq;
 }
 
+/*
+ * Returns the current tick
+ */
 uint32_t HAL_GetTick(void)
 {
 	return tick;

@@ -205,7 +205,7 @@ const uint32_t LMIC_BYTE_SIZE = sizeof(LMIC);
 static uint16_t retry_interval = 60;
 
 /*
- * Indicates when a transmission was completed
+ * Indicates if a transmission was completed
  */
 static volatile uint8_t txcomplete = 0;
 
@@ -894,7 +894,7 @@ uint32_t getCurrentMicro(void)
   /* Ensure COUNTFLAG is reset by reading SysTick control and status register */
 //  LL_SYSTICK_IsActiveCounterFlag();
 
-  //TODO: Revisar porque se hace doble este codigo
+  //TODO: Revisar porque hice doble este codigo
   getSysTickActiveCounterFlag();
 
   //Porque se hace esto 2 veces?
