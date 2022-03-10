@@ -1,0 +1,50 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Resources:
+  IoTHandlerFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+
+
+  IoTHandlerFunction:
+    Type: AWS::Lambda::Function
+    DeletionPolicy: Delete
+    Properties:
+      FunctionName: iot-handler-function
+      Environment:
+        Variables:
+          DYNAMODB_TABLE_NAME: pisciculture-buoy-table
+      Code:
+        ZipFile: |
+          import boto3
+          import json
+          from decimal import Decimal
+          import os
+
+          DYNAMODB_TABLE_NAME = os.environ['DYNAMODB_TABLE_NAME']
+
+          # Get the service resource.
+          dynamodb = boto3.resource('dynamodb')
+          table = dynamodb.Table(DYNAMODB_TABLE_NAME)
+
+          def lambda_handler(event, context):
+              ev_to_save = json.loads(json.dumps(event), parse_float=Decimal)
+              print(f"ev_to_save: {ev_to_save}")
+              table.put_item(Item=ev_to_save)
+      Handler: index.lambda_handler
+      Role: !GetAtt IoTHandlerFunctionRole.Arn
+      Runtime: python3.8
+      Timeout: 15
+
+
