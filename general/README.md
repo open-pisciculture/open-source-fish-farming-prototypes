@@ -26,7 +26,7 @@ Removing the programmer reduces the physical dimensions of the board and also lo
 This section details the jumper connections required to program and debug the board with the removed programmer. For more details, the reader can refer to the [User manual for STM32 Nucleo-64 boards](https://www.st.com/resource/en/user_manual/um1724-stm32-nucleo64-boards-mb1136-stmicroelectronics.pdf), particularly section 6.2.4.
 
 1. Remove the CN2 jumpers.
-2. Connect the removed st link to the rest of the board according to the following table:
+2. Connect the removed ST-Link to the rest of the board according to the following table:
 
 | Rest of the board (Left) | Removed ST-Link (Right) | Signal       | Jumper color |
 |--------------------------|-------------------------|--------------|--------------|
