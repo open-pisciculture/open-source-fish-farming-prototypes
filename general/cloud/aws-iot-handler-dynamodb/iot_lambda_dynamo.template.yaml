@@ -1,5 +1,11 @@
 AWSTemplateFormatVersion: 2010-09-09
 
+Parameters:
+  SQLQueryForIoTRule:
+    Description: This query should filter the received packages at the AWS IoT Core. Default query can be used as an example.
+    Type: String
+    Default: SELECT end_device_ids.device_id, received_at, get(uplink_message.rx_metadata, 0).rssi AS rssi, get(uplink_message.rx_metadata, 0).snr AS snr, uplink_message.settings.data_rate.lora.spreading_factor, uplink_message.decoded_payload.temp, uplink_message.decoded_payload.pH, uplink_message.decoded_payload.do, uplink_message.decoded_payload.mcu_temp, uplink_message.decoded_payload.latitude, uplink_message.decoded_payload.longitude, uplink_message.decoded_payload.ns, uplink_message.decoded_payload.ew FROM 'lorawan/+/uplink'
+
 Resources:
   IoTHandlerFunctionRole:
     Type: AWS::IAM::Role
@@ -15,7 +21,6 @@ Resources:
               - sts:AssumeRole
       ManagedPolicyArns:
         - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
-
 
   IoTHandlerFunction:
     Type: AWS::Lambda::Function
@@ -47,4 +52,24 @@ Resources:
       Runtime: python3.8
       Timeout: 15
 
+  IoT2LambdaRule:
+    Type: AWS::IoT::TopicRule
+    Properties:
+      RuleName: SendIoTData2Lambda
+      TopicRulePayload:
+        RuleDisabled: 'true'
+        AwsIotSqlVersion: '2016-03-23'
+        Sql: !Ref SQLQueryForIoTRule
+        Actions:
+        - Lambda:
+            FunctionArn: !GetAtt IoTHandlerFunction.Arn
+
+  IoTPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt IoTHandlerFunction.Arn
+      Action: lambda:InvokeFunction
+      Principal: !Sub iot.${AWS::Region}.amazonaws.com
+      SourceAccount: !Ref 'AWS::AccountId'
+      SourceArn: !GetAtt IoT2LambdaRule.Arn
 
