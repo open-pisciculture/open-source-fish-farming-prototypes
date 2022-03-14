@@ -1,12 +1,11 @@
 # Data buoy prototype
 
 This is a prototype for remote monitoring of temperature, pH and dissolved oxygen variables for applications in fish farming.
+![Data buoy node](images/assembled.png)
 
 ## Overview
 
 The device is a data buoy prototype. It uses sensors from Atlas-Scientific to measure temperature, pH and dissolved oxygen variables and transmits the data using LoRaWAN. This section includes the program code as an STM32CubeIDE project, the Altium project and Gerber files for the printed circuit board and the mechanical parts for assembly of the buoy. 
-
-![Data buoy node](images/assembled.png)
 
 ## Instructions
 
