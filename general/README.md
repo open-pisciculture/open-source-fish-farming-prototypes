@@ -7,7 +7,7 @@ Here supporting information common to various prototypes can be found.
   - Device payload formatters
 - Setting up LoRaWAN configuration for each device in the C program
 - Removing ST-Link Programmer Nucleo board
-- Programming the NUCLEO board with the removed programmer
+- Programming the Nucleo board with the removed programmer
 - Removing the Nucleo board solder bridges
 - Deployment of AWS services
 
