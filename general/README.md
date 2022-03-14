@@ -36,7 +36,9 @@ This section details the jumper connections required to program and debug the bo
 | CN7 Pin 14 (NRST)        | CN4 Pin 5               | NRST         | Green        |
 | CN7 Pin 16               | JP1 Pin 1 (Yellow)      | +3V3_ST_LINK | Yellow       |
 
-![ST-Link and rest of the board connections](images/STLink_and_Restofboard.jpg)
+<p align="left">
+  <img src="images/STLink_and_Restofboard.jpg" width="50%" />
+</p>
 
 ## Removing solder bridges from Nucleo board
 
