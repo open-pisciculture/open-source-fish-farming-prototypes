@@ -13,9 +13,30 @@ The Gateway used for this prototype is [this one](https://www.sparkfun.com/produ
 
 ## Creating devices in The Things Network
 
-## Removing ST-Link Programmer and Solder Bridges from Nucleo board
+## Removing ST-Link Programmer from Nucleo board
+The ST-Link programmer on the Nucleo board can be cut off to remove it. This is the top section of the board, indicated in the following image:
+
+![Nucleo 64 board programmer](images/nucleo64board_programmer.jpg)
+
+Removing the programmer reduces the physical dimensions of the board and also lowers the power consumption. However, the rest of the board has to be connected with jumpers to the removed programmer in order to program and debug it. This is detailed in the next section.
 
 ## Programming the NUCLEO board with the removed programmer
+This section details the jumper connections required to program and debug the board with the removed programmer. For more details, the reader can refer to the [User manual for STM32 Nucleo-64 boards](https://www.st.com/resource/en/user_manual/um1724-stm32-nucleo64-boards-mb1136-stmicroelectronics.pdf), particularly section 6.2.4.
+
+1. Remove the CN2 jumpers.
+2. Connect the removed st link to the rest of the board according to the following table:
+
+| Rest of the board (Left) | Removed ST-Link (Right) | Signal       | Jumper color |
+|--------------------------|-------------------------|--------------|--------------|
+| CN7 Pin 15 (PA14)        | CN4 Pin 2               | SWCLK        | Blue         |
+| CN7 Pin 19               | CN4 Pin 3               | GND          | Black        |
+| CN7 Pin 13 (PA13)        | CN4 Pin 4               | SWDIO        | Purple       |
+| CN7 Pin 14 (NRST)        | CN4 Pin 5               | NRST         | Green        |
+| CN7 Pin 16               | JP1 Pin 1 (Yellow)      | +3V3_ST_LINK | Yellow       |
+
+![ST-Link and rest of the board connections](STLink_and_Restofboard.jpg)
+
+## Removing solder bridges from Nucleo board
 
 ## Deployment of AWS services
 
