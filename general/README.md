@@ -23,7 +23,7 @@ The Gateway used for this prototype is [this one](https://www.sparkfun.com/produ
 
 First, make sure to follow the [Deployment Guide](https://www.thethingsindustries.com/docs/integrations/cloud-integrations/aws-iot/deployment-guide/) from The Things Network to deploy the AWS IoT integration for The Things Stack. This will create a CloudFormation stack in you AWS account containing several AWS resources necessary to integrate The Things Networks with your AWS account (follow mentioned documentation above to find out more about them).
 
-Second, in this repository we developed another CloudFormation template including the following resources (*Important note:* there are many ways to handle TTN received data, this way, including a Lambda function, is recommended since it gives the developer more flexibility):
+Second, in this repository we developed another [CloudFormation template](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/blob/main/general/cloud/iot_lambda_dynamo.template.yaml) including the following resources (*Important note:* there are many ways to handle TTN received data, this way, including a Lambda function, is recommended since it gives the developer more flexibility):
 
 - DynamoDB table where data is sent.
 - Lambda function.
