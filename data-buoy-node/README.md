@@ -12,7 +12,7 @@ The device is a data buoy prototype. It uses sensors from Atlas-Scientific to me
 
 ## Instructions
 
-Before assembling the data buoy, make sure to follow the initial instructions for setting up a LoRaWAN gateway and end device available [here](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/tree/main/general). Live data can be monitored through the console in The Things Network if everything is working correctly.
+Before assembling the data buoy, make sure to follow the initial instructions for setting up a LoRaWAN gateway and end device available [here](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/tree/main/general). Live data can be monitored through the console in The Things Network if everything is working correctly. The breakout board used for the RFM95W module is also included in this repository. Refer to [this section](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/tree/main/rfm95w-breakout) for the breakout board hardware files.
 
 Edit the following in the main.c file:
 - Specify the sampling period in the SLEEP_SECONDS constant in seconds
