@@ -435,17 +435,15 @@ int main(void)
 	  //TODO: Explicar este mejor que es importante
 
 	  LMIC_selectSubBand(1);
-		//Disable FSB1, channels 0-7
+	  //Disable FSB1, channels 0-7
 	  for(int i = 0; i < 7; i++)
 	  {
-//		  if (i != 10)
 		  LMIC_disableChannel(i);
 	  }
 
 	  //Disable FSB3-8, channels 16-72+
 	  for (int i = 16; i < 73; i++)
 	  {
-//		  if (i != 10)
 		  LMIC_disableChannel(i);
 	  }
 
@@ -479,7 +477,6 @@ int main(void)
     /* USER CODE BEGIN 3 */
 	os_runloop_once();
 
-	//Yo quiero quitar esto despues.
 	/* when no jobs pending and not joining, go to standby */
 	if (!os_queryTimeCriticalJobs(sec2osticks(retry_interval)) && !(LMIC.opmode & OP_JOINING) && !(LMIC.opmode & OP_TXRXPEND))
 		{
@@ -493,10 +490,10 @@ int main(void)
 
 	//			MYPRINT("Entering standby mode...\r\n");
 //				HAL_GPIO_WritePin(RFM95_CONTROL_GPIO_Port, RFM95_CONTROL_Pin, GPIO_PIN_SET);
-//				SaveSession();
-//				HAL_PWR_EnterSTANDBYMode();
-				HAL_GPIO_TogglePin(USER_LED_GPIO_Port, USER_LED_Pin);
-				HAL_Delay(1000);
+				SaveSession();
+				HAL_PWR_EnterSTANDBYMode();
+//				HAL_GPIO_TogglePin(USER_LED_GPIO_Port, USER_LED_Pin);
+//				HAL_Delay(1000);
 			}
 			else
 			{
