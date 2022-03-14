@@ -5,8 +5,10 @@ Here supporting information common to various prototypes can be found.
 - Setting up the LoRaWAN Gateway with The Things Network
 - Creating devices in The Things Network
   - Device payload formatters
-- Removing ST-Link Programmer and Solder Bridges from Nucleo board
+- Setting up LoRaWAN configuration for each device in the C program
+- Removing ST-Link Programmer Nucleo board
 - Programming the NUCLEO board with the removed programmer
+- Removing the Nucleo board solder bridges
 - Deployment of AWS services
 
 ## Setting up the LoRaWAN Gateway with The Things Network
