@@ -44,7 +44,7 @@ This section details the jumper connections required to program and debug the bo
 Solder bridge SB2 was removed to reduce power consumption and disconnect led LD3 and the unused board 3.3V voltage regulator U4. Refer to the [nucleo board schematics](https://www.st.com/resource/en/schematic_pack/nucleo_64pins_sch.zip) for details on these connections. SB2 is indicated in the following image and can be removed with a soldering iron.
 
 <p align="middle">
-  <img src="images/nucleo64board_nostlink_sb2.jpg.jpg" width="75%" />
+  <img src="images/nucleo64board_nostlink_sb2.jpg" width="75%" />
 </p>
 
 ## Deployment of AWS services
