@@ -6,6 +6,8 @@ This is a prototype for remote monitoring of temperature, pH and dissolved oxyge
 
 The device is a data buoy prototype. It uses sensors from Atlas-Scientific to measure temperature, pH and dissolved oxygen variables and transmits the data using LoRaWAN. This section includes the program code as an STM32CubeIDE project, the Altium project and Gerber files for the printed circuit board and the mechanical parts for assembly of the buoy. 
 
+![Data buoy node](images/assembled.png)
+
 ## Instructions
 
 Before assembling the data buoy, make sure to follow the initial instructions for setting up a LoRaWAN gateway and end device available [here](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/tree/main/general). Live data can be monitored through the console in The Things Network if everything is working correctly.
