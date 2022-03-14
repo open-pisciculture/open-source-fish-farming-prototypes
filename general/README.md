@@ -12,17 +12,26 @@ Here supporting information common to various prototypes can be found.
 The Gateway used for this prototype is [this one](https://www.sparkfun.com/products/16447). First, make sure to follow the Getting Started Guide available under the Documents tab in the [Sparkfun website](https://cdn.sparkfun.com/assets/8/3/6/d/4/Getting_Started_Guide_for_RAK7244_V1.0.pdf). Section 6 (Connecting the Gateway to TTN) of this guide includes instructions for The Things Network V2, which is no longer maintained. See [this guide](https://www.thethingsindustries.com/docs/gateways/adding-gateways/) for instructions to add the Gateway to The Things Stack V3.
 
 ## Creating devices in The Things Network
+Refer to the [Manually Registering an End Device](https://www.thethingsindustries.com/docs/devices/adding-devices/#manually-registering-an-end-device) section guide from The Things Network for instructions to add a device. For the project as presented in this repository, the following options are used:
 
-Additionally, the payload formatter javascript code used for each device is included inside the software folder for the GPS and the data buoy nodes. It can be copied to each device's payload formatter to correctly retrieve the data. 
+- LoRaWAN version: LoRaWAN Specification 1.0.3
+- Frequency plan: United States 902-928 MHz, FSB 2 (used by TTN)
+- Regional Parameters version: RP001 Regional Parameters 1.0.3 revision A
+- LoRaWan class capabilities unchecked for both Supports class B and Supports class C
+
+Verify the frequency plan assigned to LoRaWAN in your country before registering your device. A good starting point can be [Frequency Plans by Country](https://www.thethingsnetwork.org/docs/lorawan/frequencies-by-country/) from The Things Network. However, this is NOT an official document and you should make sure to check your country's regulations.
+
+### Device payload formatters
+The payload formatter javascript code used for each device is included inside the software folder for the [GPS](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/blob/main/gps-node/software/ttn/payload_formatter.txt) and the [data-buoy](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/blob/main/data-buoy-node/software/ttn/payload_formatter.txt) nodes. It can be copied to each device's payload formatter to correctly retrieve the data. 
 
 ## Setting LoRaWAN configuration for each device
-Each device (data buoy node and gps node) has three constants in the main.c file that should be edited according to the information from The Things Stack. Refer to your particular device's Overview tab in the Console and copy the following information:
+Each device (data-buoy-node and gps-node) has three constants in the main.c file that should be edited according to the information from The Things Stack. Refer to your particular device's Overview tab in the Console and copy the following information:
 
 - APPEUI should be set to the information in the AppEUI field. This must be in lsb format. Make sure to switch the byte order in the Console to lsb before copying.
 - DEVEUI should correspond to the information in the DevEUI field. Similar to before, it must be in lsb format. Switch the byte order before copying.
 - APPKEY contains the information in the AppKey field. This must be in msb format, not lsb like the other two cases. Make sure to switch the byte order to msb before copying.
 
-The Activation Information tab in the Console should look similar to the following image:
+The Activation Information tab in the Console should look similar to the following image (with your particular information for each field):
 
 <p align="middle">
   <img src="images/activation_information.png" width="50%" />
