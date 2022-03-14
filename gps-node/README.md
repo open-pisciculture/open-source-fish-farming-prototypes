@@ -16,7 +16,7 @@ This is a device for transmitting gps coordinates using LoRaWAN each time the us
 
 ## Prerequisites
 
-Refer to [this section](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/tree/main/general) for intructions to remove the ST-Link programmer and to program the Nucleo board with the removed programmer.
+Refer to [this section](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/tree/main/general) for intructions to remove the ST-Link programmer and to program the Nucleo board with the removed programmer. In addition, the breakout board used for the RFM95W module is available [here](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/tree/main/rfm95w-breakout). The device as presented here uses this breakout board to easily connect the module with a breadboard.
 
 ## Instructions
 
