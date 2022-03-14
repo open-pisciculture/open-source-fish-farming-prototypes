@@ -34,6 +34,10 @@ Simply go to the AWS Console > CloudFormation > Create stack > With new resource
 
 When appropriately following these steps, you should end up with a `CREATE_COMPLETE` status, you can double check this in the AWS Console > CloudFormation > Search bar '<your stack name>'.
 
+<p align="middle">
+  <img src="images/stack_status.png" />
+</p>
+  
 ![CloudFormation 'Create Complete' Status](images/stack_status.png)
 
 
