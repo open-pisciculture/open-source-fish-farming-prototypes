@@ -37,7 +37,5 @@ When appropriately following these steps, you should end up with a `CREATE_COMPL
 <p align="middle">
   <img src="images/stack_status.png" />
 </p>
-  
-![CloudFormation 'Create Complete' Status](images/stack_status.png)
 
 
