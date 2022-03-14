@@ -7,6 +7,28 @@ Parameters:
     Default: SELECT end_device_ids.device_id, received_at, get(uplink_message.rx_metadata, 0).rssi AS rssi, get(uplink_message.rx_metadata, 0).snr AS snr, uplink_message.settings.data_rate.lora.spreading_factor, uplink_message.decoded_payload.temp, uplink_message.decoded_payload.pH, uplink_message.decoded_payload.do, uplink_message.decoded_payload.mcu_temp, uplink_message.decoded_payload.latitude, uplink_message.decoded_payload.longitude, uplink_message.decoded_payload.ns, uplink_message.decoded_payload.ew FROM 'lorawan/+/uplink'
 
 Resources:
+  IoTDataTable:
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      AttributeDefinitions:
+        - 
+          AttributeName: "device_id"
+          AttributeType: "S"
+        - 
+          AttributeName: "received_at"
+          AttributeType: "S"
+      KeySchema: 
+        - 
+          AttributeName: "device_id"
+          KeyType: "HASH"
+        - 
+          AttributeName: "received_at"
+          KeyType: "RANGE"
+      ProvisionedThroughput: 
+        ReadCapacityUnits: "5"
+        WriteCapacityUnits: "5"
+      TableName: "iot-data-table"
+  
   IoTHandlerFunctionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -29,7 +51,7 @@ Resources:
       FunctionName: iot-handler-function
       Environment:
         Variables:
-          DYNAMODB_TABLE_NAME: pisciculture-buoy-table
+          DYNAMODB_TABLE_NAME: !Ref IoTDataTable
       Code:
         ZipFile: |
           import boto3
