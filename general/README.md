@@ -47,6 +47,8 @@ Solder bridge SB2 was removed to reduce power consumption and disconnect led LD3
   <img src="images/nucleo64board_nostlink_sb2.jpg" width="75%" />
 </p>
 
+Keep in mind that this will disconnect the board voltage regulator. Therefore, the microcontroller will need an external 3.3V power supply, which is why the previous section uses the ST-Link 3.3V power supply for programming.
+
 ## Deployment of AWS services
 
 ![AWS services](images/aws_diagram.png)
