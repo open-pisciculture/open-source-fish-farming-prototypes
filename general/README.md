@@ -16,7 +16,7 @@ The Gateway used for this prototype is [this one](https://www.sparkfun.com/produ
 ## Removing ST-Link Programmer from Nucleo board
 The ST-Link programmer on the Nucleo board can be cut off to remove it. This is the top section of the board, indicated in the following image:
 
-<p align="left">
+<p align="middle">
   <img src="images/nucleo64board_programmer.jpg" width="50%" />
 </p>
 
@@ -37,7 +37,7 @@ This section details the jumper connections required to program and debug the bo
 | CN7 Pin 16               | JP1 Pin 1 (Yellow)      | +3V3_ST_LINK | Yellow       |
 
 <p align="left">
-  <img src="images/STLink_and_Restofboard.jpg" width="50%" />
+  <img src="images/STLink_and_Restofboard.jpg" width="75%" />
 </p>
 
 ## Removing solder bridges from Nucleo board
