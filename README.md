@@ -46,6 +46,28 @@ The PCB designs use 3D models and footprints from [SnapEDA](https://www.snapeda.
 
 ## Licenses
 
+<table>
+<thead>
+  <tr>
+    <th colspan="2">Open Source Licenses</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td>Software</td>
+     <td><a href="https://opensource.org/licenses/MIT">MIT License</a></td>
+  </tr>
+  <tr>
+    <td>Hardware</td>
+    <td><a href="https://ohwr.org/cern_ohl_p_v2.pdf">CERN-OHL-P</a></td>
+  </tr>
+  <tr>
+    <td>Documentation</td>
+    <td><a href="http://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></td>
+  </tr>
+</tbody>
+</table>
+
 ### Software
 The software is licensed under an [MIT License](https://opensource.org/licenses/MIT). A copy of the license has been included in the repository and can be found [here](https://github.com/open-pisciculture/temp-open-fish-farming/blob/main/LICENSE-MIT.txt).
 
