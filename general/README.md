@@ -20,7 +20,7 @@ Refer to the [Manually Registering an End Device](https://www.thethingsindustrie
 - LoRaWAN version: LoRaWAN Specification 1.0.3
 - Frequency plan: United States 902-928 MHz, FSB 2 (used by TTN)
 - Regional Parameters version: RP001 Regional Parameters 1.0.3 revision A
-- LoRaWan class capabilities unchecked for both Supports class B and Supports class C
+- LoRaWAN class capabilities unchecked for both Supports class B and Supports class C
 
 Verify the frequency plan assigned to LoRaWAN in your country before registering your device. A good starting point can be [Frequency Plans by Country](https://www.thethingsnetwork.org/docs/lorawan/frequencies-by-country/) from The Things Network. However, this is NOT an official document and you should make sure to check your country's regulations.
 
