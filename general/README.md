@@ -22,7 +22,7 @@ Refer to the [Manually Registering an End Device](https://www.thethingsindustrie
 - Regional Parameters version: RP001 Regional Parameters 1.0.3 revision A
 - LoRaWAN class capabilities unchecked for both Supports class B and Supports class C
 
-Verify the frequency plan assigned to LoRaWAN in your country before registering your device. A good starting point can be [Frequency Plans by Country](https://www.thethingsnetwork.org/docs/lorawan/frequencies-by-country/) from The Things Network. However, this is NOT an official document and you should make sure to check your country's regulations.
+Verify the frequency plan assigned to LoRaWAN in your country before registering your device. The [Regional Parameters](https://lora-alliance.org/resource_hub/rp2-1-0-3-lorawan-regional-parameters/) document from LoRa Alliance is a good reference to find the frequency plan for your country.
 
 ### Device payload formatters
 The payload formatter javascript code used for each device is included inside the software folder for the [GPS](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/blob/main/gps-node/software/ttn/payload_formatter.txt) and the [data-buoy](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/blob/main/data-buoy-node/software/ttn/payload_formatter.txt) nodes. It can be copied to each device's payload formatter to correctly retrieve the data. 
