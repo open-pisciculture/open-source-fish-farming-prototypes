@@ -1,0 +1,10 @@
+# A few example queries for AWS IoT Rules. Can be set as parameters in the CloudFormation template.
+
+SELECT end_device_ids.device_id, received_at, get(uplink_message.rx_metadata, 0).rssi, uplink_message.decoded_payload.temp, uplink_message.decoded_payload.pH, uplink_message.decoded_payload.do, uplink_message.decoded_payload.mcu_temp FROM 'lorawan/+/uplink'
+
+
+SELECT end_device_ids.device_id, received_at, ( SELECT get(uplink_message.rx_metadata, 0).rssi AS rssi FROM 'lorawan/+/uplink' ), uplink_message.decoded_payload.temp, uplink_message.decoded_payload.pH, uplink_message.decoded_payload.do, uplink_message.decoded_payload.mcu_temp FROM 'lorawan/+/uplink'
+
+
+SELECT end_device_ids.device_id, received_at, uplink_message.decoded_payload.temp, uplink_message.decoded_payload.pH, uplink_message.decoded_payload.do, uplink_message.decoded_payload.mcu_temp FROM 'lorawan/+/uplink'
+

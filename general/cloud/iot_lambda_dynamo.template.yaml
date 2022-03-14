@@ -1,0 +1,97 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  SQLQueryForIoTRule:
+    Description: This query should filter the received packages at the AWS IoT Core. Default query can be used as an example.
+    Type: String
+    Default: SELECT end_device_ids.device_id, received_at, get(uplink_message.rx_metadata, 0).rssi AS rssi, get(uplink_message.rx_metadata, 0).snr AS snr, uplink_message.settings.data_rate.lora.spreading_factor, uplink_message.decoded_payload.temp, uplink_message.decoded_payload.pH, uplink_message.decoded_payload.do, uplink_message.decoded_payload.mcu_temp, uplink_message.decoded_payload.latitude, uplink_message.decoded_payload.longitude, uplink_message.decoded_payload.ns, uplink_message.decoded_payload.ew FROM 'lorawan/+/uplink'
+
+Resources:
+  IoTDataTable:
+    Type: AWS::DynamoDB::Table
+    Properties: 
+      AttributeDefinitions:
+        - 
+          AttributeName: "device_id"
+          AttributeType: "S"
+        - 
+          AttributeName: "received_at"
+          AttributeType: "S"
+      KeySchema: 
+        - 
+          AttributeName: "device_id"
+          KeyType: "HASH"
+        - 
+          AttributeName: "received_at"
+          KeyType: "RANGE"
+      ProvisionedThroughput: 
+        ReadCapacityUnits: "5"
+        WriteCapacityUnits: "5"
+      TableName: "iot-data-table"
+  
+  IoTHandlerFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        - 'arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole'
+
+  IoTHandlerFunction:
+    Type: AWS::Lambda::Function
+    DeletionPolicy: Delete
+    Properties:
+      FunctionName: iot-handler-function
+      Environment:
+        Variables:
+          DYNAMODB_TABLE_NAME: !Ref IoTDataTable
+      Code:
+        ZipFile: |
+          import boto3
+          import json
+          from decimal import Decimal
+          import os
+
+          DYNAMODB_TABLE_NAME = os.environ['DYNAMODB_TABLE_NAME']
+
+          # Get the service resource.
+          dynamodb = boto3.resource('dynamodb')
+          table = dynamodb.Table(DYNAMODB_TABLE_NAME)
+
+          def lambda_handler(event, context):
+              ev_to_save = json.loads(json.dumps(event), parse_float=Decimal)
+              print(f"ev_to_save: {ev_to_save}")
+              table.put_item(Item=ev_to_save)
+      Handler: index.lambda_handler
+      Role: !GetAtt IoTHandlerFunctionRole.Arn
+      Runtime: python3.8
+      Timeout: 15
+
+  IoT2LambdaRule:
+    Type: AWS::IoT::TopicRule
+    Properties:
+      RuleName: SendIoTData2Lambda
+      TopicRulePayload:
+        RuleDisabled: 'true'
+        AwsIotSqlVersion: '2016-03-23'
+        Sql: !Ref SQLQueryForIoTRule
+        Actions:
+        - Lambda:
+            FunctionArn: !GetAtt IoTHandlerFunction.Arn
+
+  IoTPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt IoTHandlerFunction.Arn
+      Action: lambda:InvokeFunction
+      Principal: !Sub iot.${AWS::Region}.amazonaws.com
+      SourceAccount: !Ref 'AWS::AccountId'
+      SourceArn: !GetAtt IoT2LambdaRule.Arn
+
