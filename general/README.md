@@ -12,7 +12,7 @@ Here supporting information common to various prototypes can be found.
 - Deployment of AWS services
 
 ## Setting up the LoRaWAN Gateway with The Things Network
-The Gateway used for this prototype is the [LoRa Raspberry Pi 4 Gateway with Enclosure](https://www.sparkfun.com/products/16447). First, make sure to follow the Getting Started Guide available under the Documents tab in the [Sparkfun website](https://cdn.sparkfun.com/assets/8/3/6/d/4/Getting_Started_Guide_for_RAK7244_V1.0.pdf). Section 6 (Connecting the Gateway to TTN) of this guide includes instructions for The Things Network V2, which is no longer maintained. See [this guide](https://www.thethingsindustries.com/docs/gateways/adding-gateways/) for instructions to add the Gateway to The Things Stack V3.
+The Gateway used for this prototype is the [LoRa Raspberry Pi 4 Gateway with Enclosure](https://www.sparkfun.com/products/16447) from Sparkfun. First, make sure to follow the Getting Started Guide available under the Documents tab in the [Sparkfun website](https://cdn.sparkfun.com/assets/8/3/6/d/4/Getting_Started_Guide_for_RAK7244_V1.0.pdf). Section 6 (Connecting the Gateway to TTN) of this guide includes instructions for The Things Network V2, which is no longer maintained. See [this guide](https://www.thethingsindustries.com/docs/gateways/adding-gateways/) for instructions to add the Gateway to The Things Stack V3.
 
 ## Creating devices in The Things Network
 Refer to the [Manually Registering an End Device](https://www.thethingsindustries.com/docs/devices/adding-devices/#manually-registering-an-end-device) section guide from The Things Network for instructions to add a device. For the project as presented in this repository, the following options are used:
