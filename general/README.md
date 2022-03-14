@@ -9,9 +9,24 @@ Here supporting information common to various prototypes can be found.
 - Deployment of AWS services
 
 ## Setting up the LoRaWAN Gateway with The Things Network
-The Gateway used for this prototype is [this one](https://www.sparkfun.com/products/16447). First, make sure to follow the Getting Started Guide available under the Documents tab in the [Sparkfun website](https://cdn.sparkfun.com/assets/8/3/6/d/4/Getting_Started_Guide_for_RAK7244_V1.0.pdf).
+The Gateway used for this prototype is [this one](https://www.sparkfun.com/products/16447). First, make sure to follow the Getting Started Guide available under the Documents tab in the [Sparkfun website](https://cdn.sparkfun.com/assets/8/3/6/d/4/Getting_Started_Guide_for_RAK7244_V1.0.pdf). Section 6 (Connecting the Gateway to TTN) of this guide includes instructions for The Things Network V2, which is no longer maintained. See [this guide](https://www.thethingsindustries.com/docs/gateways/adding-gateways/) for instructions to add the Gateway to The Things Stack V3.
 
 ## Creating devices in The Things Network
+
+Additionally, the payload formatter javascript code used for each device is included inside the software folder for the GPS and the data buoy nodes. It can be copied to each device's payload formatter to correctly retrieve the data. 
+
+## Setting LoRaWAN configuration for each device
+Each device (data buoy node and gps node) has three constants in the main.c file that should be edited according to the information from The Things Stack. Refer to your particular device's Overview tab in the Console and copy the following information:
+
+- APPEUI should be set to the information in the AppEUI field. This must be in lsb format. Make sure to switch the byte order in the Console to lsb before copying.
+- DEVEUI should correspond to the information in the DevEUI field. Similar to before, it must be in lsb format. Switch the byte order before copying.
+- APPKEY contains the information in the AppKey field. This must be in msb format, not lsb like the other two cases. Make sure to switch the byte order to msb before copying.
+
+The Activation Information tab in the Console should look similar to the following image:
+
+<p align="middle">
+  <img src="images/activation_information.png" width="50%" />
+</p>
 
 ## Removing ST-Link Programmer from Nucleo board
 The ST-Link programmer on the Nucleo board can be cut off to remove it. This is the top section of the board, indicated in the following image:
