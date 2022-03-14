@@ -1,7 +1,10 @@
 # Data buoy prototype
 
 This is a prototype for remote monitoring of temperature, pH and dissolved oxygen variables for applications in fish farming.
-![Data buoy node](images/assembled.png)
+
+<p align="left">
+  <img src="images/assembled.png" width="70%" />
+</p>
 
 ## Overview
 
