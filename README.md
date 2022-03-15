@@ -44,7 +44,7 @@ Bibtex
 ## Attribution
 
 - The PCB designs use 3D models, symbols and footprints from [SnapEDA](https://www.snapeda.com/).
-- The data buoy mechanical assemblies use 3d models from [Atlas Scientific](https://atlas-scientific.com/)
+- The data buoy mechanical assemblies use 3d models from [Atlas Scientific](https://atlas-scientific.com/).
 
 ## Licenses
 
