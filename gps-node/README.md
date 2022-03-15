@@ -26,6 +26,9 @@ Refer to [this section](https://github.com/open-pisciculture/open-source-fish-fa
 ### Pin connections
 
 #### GPS Module NEO-6MV2 connections
+
+Connect the VCC Pin to the battery voltage, not the regulator 3.3V output.
+
 | Nucleo pin  | NEO-6MV2 pin |
 |-------------|--------------|
 | CN10 Pin 6  | RX           |
