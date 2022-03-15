@@ -25,6 +25,12 @@ Refer to [this section](https://github.com/open-pisciculture/open-source-fish-fa
 
 ### Pin connections
 
+#### GPS Module NEO-6MV2 connections
+| Nucleo pin  | NEO-6MV2 pin |
+|-------------|--------------|
+| CN10 Pin 6  | RX           |
+| CN10 Pin 34 | TX           |
+
 #### RFM95W connections
 | NUCLEO pin | RFM95W breakout pin | RFM95W module pin |
 |:----------:|:-------------------:|-------------------|
