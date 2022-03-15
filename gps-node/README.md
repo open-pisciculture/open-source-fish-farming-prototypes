@@ -35,7 +35,7 @@ Connect the VCC Pin to the battery voltage, not the regulator 3.3V output.
 | CN10 Pin 34 | TX           |
 
 #### RFM95W connections
-| NUCLEO pin | RFM95W breakout pin | RFM95W module pin |
+| Nucleo pin | RFM95W breakout pin | RFM95W module pin |
 |:----------:|:-------------------:|-------------------|
 |     D12    |          2          | MISO              |
 |     D11    |          3          | MOSI              |
