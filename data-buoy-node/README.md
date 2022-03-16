@@ -10,13 +10,18 @@ The device is a data buoy prototype for measuring water quality variables. It us
 
 ## Instructions
 
+### Prerequisites
 Before assembling the data buoy, make sure to follow the initial instructions for setting up a LoRaWAN gateway and end device available [here](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/tree/main/general). Live data can be monitored through the console in The Things Network if everything is working correctly. The breakout board used for the RFM95W module is also included in this repository. Refer to [this section](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/tree/main/rfm95w-breakout) for the breakout board hardware files.
 
+### Program code editing
 Edit the following in the main.c file:
 - Specify the sampling period in the SLEEP_SECONDS constant in seconds
 - Follow the [Setting LoRaWAN configuration for each device](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/tree/main/general) section to add the device-specific information from The Things Network
 
 For instructions to program the board if the ST-Link programmer was removed refer to this [section](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/tree/main/general).
+
+### Mechanical assembly
+A guide for the assembly of the prototype has been included and can be consulted in the [assembly_guide](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/blob/main/data-buoy-node/assembly_guide.docx) word document.
 
 ## Usage
 1. Turn on the device. Each sensor circuit will briefly light up and blink blue while the microcontroller reads each value.
