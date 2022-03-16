@@ -1,0 +1,18 @@
+!SESSION 2022-03-16 16:01:32.728 -----------------------------------------------
+eclipse.buildId=Version 1.7.0
+java.version=11.0.10
+java.vendor=AdoptOpenJDK
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=en_US
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -data C:\Users\jdmed\Downloads\Uniandes\AsistenciaInvestigacion\OpenSourceDataBuoy\open-source-fish-farming-prototypes\data-buoy-node\software
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2022-03-16 16:01:36.669
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2022-03-16 16:01:36.708
+!MESSAGE Log4j initialized with config file C:\Users\jdmed\Downloads\Uniandes\AsistenciaInvestigacion\OpenSourceDataBuoy\open-source-fish-farming-prototypes\data-buoy-node\software\.metadata\.log4j.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2022-03-16 16:01:38.489
+!MESSAGE Started RMI Server, listening on port 41337
+
+!ENTRY org.eclipse.cdt.core 1 0 2022-03-16 16:02:02.978
+!MESSAGE Indexed 'prototype-data-buoy' (47 sources, 189 headers) in 4.24 sec: 16,477 declarations; 93,449 references; 3 unresolved inclusions; 48 syntax errors; 171 unresolved names (0.16%)
