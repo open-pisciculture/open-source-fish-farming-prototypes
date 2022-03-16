@@ -13,6 +13,12 @@ The device is a data buoy prototype for measuring water quality variables. It us
 ### Prerequisites
 Before assembling the data buoy, make sure to follow the initial instructions for setting up a LoRaWAN gateway and end device available [here](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/tree/main/general). Live data can be monitored through the console in The Things Network if everything is working correctly. The breakout board used for the RFM95W module is also included in this repository. Refer to [this section](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/tree/main/rfm95w-breakout) for the breakout board hardware files.
 
+### Switching the Atlas Scientific circuits to I2C mode
+The EZO line of circuits can be used in both UART and I2C mode. By default, they come in UART mode and must be changed to I2C mode before assembling the buoy. 
+A simple code for doing this has been included [here](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/tree/main/data-buoy-node/software/switch-atlas-i2c). Connect the sensor to the NUCLEO-L476RG board indicated as follows and run the code with the desired I2C address. This code will only work in UART mode.
+
+
+
 ### Program code editing
 Edit the following in the main.c file:
 - Specify the sampling period in the SLEEP_SECONDS constant in seconds
