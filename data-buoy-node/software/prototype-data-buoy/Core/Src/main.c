@@ -16,6 +16,13 @@
  *
  ******************************************************************************
  */
+/*
+ * Part of this code was based off this application example:
+ * https://github.com/Luddi1/LoRaWAN-fence-monitor/tree/master/lora_fence_monitor_firmware
+ *
+ * Check this forum post for more details:
+ * https://www.thethingsnetwork.org/forum/t/application-example-with-mcci-catena-arduino-lmic-on-stm32l071/35779
+ */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -182,7 +189,7 @@ void os_getDevKey(u1_t *buf) {
 static uint8_t loradata[LORA_MESSAGE_NUM_BYTES] = { 0 };
 
 /*
- * TODO
+ * TODO(jdm): Terminar esta descripcion
  */
 static uint8_t lora_port = 2;
 static uint8_t lora_confirmed = 0;
@@ -261,7 +268,8 @@ void do_send(osjob_t *j) {
 }
 
 /*
- * TODO: LoRaWAN Events
+ * Called when LoRaWAN events occur.
+ * @param The event that occured
  */
 void onEvent(ev_t ev) {
 	switch (ev) {
@@ -432,7 +440,7 @@ int main(void)
 	  LMIC_setClockError(MAX_CLOCK_ERROR * 5 / 100);
 
 	  //Disable unavailable channels
-	  //TODO: Explicar este mejor que es importante
+	  //TODO(jdm): Explicar este mejor que es importante
 
 	  LMIC_selectSubBand(1);
 	  //Disable FSB1, channels 0-7
@@ -454,7 +462,6 @@ int main(void)
 	  LMIC_setDrTxpow(DR_SF10, 14);
   }
 
-  //TODO: Organizar mejor esto del loradata, quizas meterlo en un metodo?
   loradata[0] = (uint8_t) (sample.mcu_temperature >> 8);
   loradata[1] = (uint8_t) sample.mcu_temperature;
   loradata[2] = (uint8_t) (sample.temperature >> 8);
@@ -482,7 +489,6 @@ int main(void)
 		{
 			if (txcomplete)
 			{
-				//TODO: Poner el codigo que vaya a standby mode.
 				//Seria chevere poner una macro para facilmente cambiar entre standby mode y delay
 	//				MYPRINT("Save session\r\n");
 
@@ -497,7 +503,7 @@ int main(void)
 			}
 			else
 			{
-				// TODO: timeout with txcomplete check
+				// Timeout with txcomplete check. Unused in this implementation.
 			}
 		}
 	}
@@ -865,7 +871,7 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 
 //void MYPRINT(char *msg) {
-//	HAL_UART_Transmit(&huart3, (uint8_t*) msg, strlen(msg) + 1, HAL_MAX_DELAY); //TODO: Revisar lo del timeout
+//	HAL_UART_Transmit(&huart3, (uint8_t*) msg, strlen(msg) + 1, HAL_MAX_DELAY);
 //}
 
 /*
@@ -891,10 +897,9 @@ uint32_t getCurrentMicro(void)
   /* Ensure COUNTFLAG is reset by reading SysTick control and status register */
 //  LL_SYSTICK_IsActiveCounterFlag();
 
-  //TODO: Revisar porque hice doble este codigo
+  //TODO: Check whether it's required to run this part twice.
   getSysTickActiveCounterFlag();
 
-  //Porque se hace esto 2 veces?
   uint32_t m = HAL_GetTick();
   uint32_t u = SysTick->LOAD - SysTick->VAL;
 
@@ -907,7 +912,7 @@ uint32_t getCurrentMicro(void)
 }
 
 /*
- * TODO: Acordarme esto que hacia
+ * TODO(jdm): Acordarme esto que hacia
  */
 uint8_t getSysTickActiveCounterFlag()
 {
@@ -947,7 +952,6 @@ uint8_t remove_decimal(char* pStr, char c)
 /*
  * Reads the raw ADC temperature sensor calibration values and adjusts for the difference in voltage reference values.
  * Here, the reference voltage used is 3.3V. This should be edited if the reference voltage changes.
- * TODO: Quizas poner una macro? No podria probar que funciona...
  */
 void MCUTempInit()
 {

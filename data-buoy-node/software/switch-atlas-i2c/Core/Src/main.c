@@ -93,6 +93,9 @@ int main(void)
   MX_USART3_UART_Init();
   /* USER CODE BEGIN 2 */
 
+  /*
+   * Used to finish the command.
+   */
   char cmd0[] = "\r";
 
   /*
@@ -111,15 +114,36 @@ int main(void)
    */
   char cmd[] = "I2C,104\r";
 
+  /*
+   * Buffers for data reception from sensors.
+   */
   uint8_t rxbuffer0[10] = {0};
   uint8_t rxbuffer[9] = {0};
 
+  /*
+   * I'm not sure what happens during the first transmission in UART mode.
+   * I think the circuit believes some character were sent to it during initialization.
+   * Perhaps the pin used as Tx is set to some alternate function when reset?
+   * Thus, any command sent will return an error. I solved this by sending the "\r" character,
+   * which terminates the command, and reading the "*ER\r" received by the sensor.
+   * After that, the sensor can be sent any command without any errors. At this point,
+   * the command "I2C,n\r" is transmitted to change the sensor to I2C mode and assign the
+   * I2C address n.
+   */
   __HAL_UART_CLEAR_OREFLAG(&huart3);
   HAL_UART_Transmit(&huart3, (uint8_t *) cmd0, 1, 100);
   HAL_UART_Receive(&huart3, rxbuffer0, sizeof(rxbuffer0), 100);
 
+  /*
+   * Short delay between transmission.
+   * Not necessary. However, the circuit LED briefly blinks red when an error occurs.
+   * This delay enables the user to see the LED blink before the next transmission begins.
+   */
   HAL_Delay(1000);
 
+  /*
+   * Transmit the command that changes the mode to I2C with the indicated I2C address.
+   */
   HAL_UART_Transmit(&huart3, (uint8_t *) cmd, sizeof(cmd) - 1, 100);
   HAL_UART_Receive(&huart3, rxbuffer, sizeof(rxbuffer), 1000);
   /* USER CODE END 2 */

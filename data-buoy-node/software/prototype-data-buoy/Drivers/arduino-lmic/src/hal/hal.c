@@ -33,7 +33,7 @@ static hal_failure_handler_t *custom_hal_failure_handler = NULL;
 // variables that have to be preserved after sleep
 static struct hal_s hal_vars;
 
-//TODO: Pongo estos buffers aqui para no estar definiendolos cada vez que se quiera comunicar por SPI.
+// SPI communication buffers
 uint8_t TxBuffer[64] = { 0 };
 uint8_t RxBuffer[64] = { 0 };
 uint8_t data[64] = { 0 };
@@ -186,7 +186,10 @@ static void hal_spi_init() {
 	// most of config done in spi.c
 }
 
-//TODO: Revisar bien como hacer con este metodo.
+/*
+ * TODO(jdm): Terminar esta descripcion
+ * Transmit or Receive data through SPI
+ */
 static void hal_spi_trx(u1_t cmd, u1_t *buf, size_t len, bit_t is_read) {
 	uint32_t i;
 
