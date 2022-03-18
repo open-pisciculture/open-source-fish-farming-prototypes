@@ -17,7 +17,22 @@ Before assembling the data buoy, make sure to follow the initial instructions fo
 The EZO line of circuits can be used in both UART and I2C mode. By default, they come in UART mode and must be changed to I2C mode before assembling the buoy. 
 A simple code for doing this has been included [here](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/tree/main/data-buoy-node/software/switch-atlas-i2c). Connect the sensor to the NUCLEO-L476RG board indicated as follows and run the code with the desired I2C address. This code will only work in UART mode.
 
+| Nucleo pin | EZO circuit pin |
+|------------|-----------------|
+| 3V3        | VCC             |
+| GND        | GND             |
+| CN7 Pin 2  | TX              |
+| CN7 Pin 1  | RX              |
 
+Use the following I2C addresses:
+
+| EZO circuit      | I2C Address |
+|------------------|-------------|
+| RTD Temperature  | 102         |
+| pH               | 103         |
+| Dissolved Oxygen | 104         |
+
+Feel free to change the I2C addresses to other values. Make sure to change the SENSOR_I2C_ADDRESS macros in the main.c file and use valid numbers between 1 and 127. Check the Atlas circuit datasheets for details.
 
 ### Program code editing
 Edit the following in the main.c file:
