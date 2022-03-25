@@ -37,13 +37,11 @@ This system transmits GPS coordinates each time the user presses a button to an 
 A simple breakout board for an RFM95W module for easier prototyping with a breadboard. Hardware files are available in the [rfm95w-breakout](https://github.com/open-pisciculture/open-source-fish-farming-prototypes/tree/main/rfm95w-breakout) folder.
 
 ## General
-This section includes guides and information that are common to the various prototypes. 
+This section includes guides and information that are common to the various projects. 
 
 - LoRaWAN Gateway and Device setup
 - Removing the ST-Link programmer from the NUCLEO-64 boards
 - Amazon Web Services (AWS) services implementation
-
-
 
 ## Attribution
 
