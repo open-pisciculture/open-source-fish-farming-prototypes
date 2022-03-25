@@ -2,7 +2,7 @@
 
 In this project we present the design of an open-source and low-cost buoy prototype for remote monitoring of water quality variables in fish farming. The designed battery-powered system periodically measures temperature, pH and dissolved oxygen, transmitting the information locally through LoRaWAN, a low-power wide-area network protocol, to a gateway connected to a cloud service for data storage and visualization. We provide a novel buoy design that can be easily constructed with off-the-shelf materials, delivering a stable anchored float for the IoT device and the probes immersed in the water pond. All the elements of this design, including hardware and software designs, are freely available under permissive licenses as an open-source project. Please, first read the paper that presents this project for further details of the design and field test at an operating fish farm.
 
-The repository is split into four sections: the data-buoy-node folder presents the main data buoy prototype, the gps-node and breakout-board categories include additional minor devices, and the general section holds information shared by all.
+The repository is split into four sections: the data-buoy-node folder presents the main data buoy prototype, the gps-node and breakout-board categories include additional devices, and the general section holds information shared by all.
 
 ## Article
 
