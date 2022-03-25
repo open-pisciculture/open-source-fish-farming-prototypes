@@ -4,6 +4,15 @@ In this project we present the design of an open-source and low-cost buoy protot
 
 This repository presents 3 prototypes for fish farming applications based on LoRaWAN. 
 
+## Article
+
+LINK A PLOSONE
+
+PARA CITAR: 
+[CITA]
+
+Bibtex
+
 ## Sections
 
 ### Data buoy node
@@ -34,14 +43,7 @@ This section includes guides and information common to the various prototypes.
 - Removing the ST-Link programmer from the NUCLEO-64 boards
 - Amazon Web Services (AWS) services implementation
 
-## Article
 
-LINK A PLOSONE
-
-PARA CITAR: 
-[CITA]
-
-Bibtex
 
 ## Attribution
 
