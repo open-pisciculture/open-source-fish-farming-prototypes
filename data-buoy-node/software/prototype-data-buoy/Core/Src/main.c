@@ -407,7 +407,7 @@ int main(void)
 
   //	MYPRINT("Start LMIC\r\n");
 
-  HAL_GPIO_WritePin(USER_LED_GPIO_Port, USER_LED_Pin, GPIO_PIN_SET);
+//  HAL_GPIO_WritePin(USER_LED_GPIO_Port, USER_LED_Pin, GPIO_PIN_SET);
   AtlasSensorData sample = {0};
   readSensors(&sample);
 
@@ -440,7 +440,6 @@ int main(void)
 	  LMIC_setClockError(MAX_CLOCK_ERROR * 5 / 100);
 
 	  //Disable unavailable channels
-	  //TODO(jdm): Explicar este mejor que es importante
 
 	  LMIC_selectSubBand(1);
 	  //Disable FSB1, channels 0-7
@@ -490,11 +489,11 @@ int main(void)
 			if (txcomplete)
 			{
 				//Seria chevere poner una macro para facilmente cambiar entre standby mode y delay
-	//				MYPRINT("Save session\r\n");
+//				MYPRINT("Save session\r\n");
 
-	//				MYPRINT("Standby\r\n")*-/8-;
+//				MYPRINT("Standby\r\n")*-/8-;
 
-	//			MYPRINT("Entering standby mode...\r\n");
+//				MYPRINT("Entering standby mode...\r\n");
 //				HAL_GPIO_WritePin(RFM95_CONTROL_GPIO_Port, RFM95_CONTROL_Pin, GPIO_PIN_SET);
 				SaveSession();
 				HAL_PWR_EnterSTANDBYMode();
@@ -1059,7 +1058,7 @@ void HAL_RTCEx_WakeUpTimerEventCallback(RTC_HandleTypeDef *hrtc)
 	__HAL_RTC_WAKEUPTIMER_CLEAR_FLAG(hrtc, RTC_FLAG_WUTF);
 	txcomplete = 0;
 	RTC_WakeupConfig();
-	HAL_GPIO_WritePin(USER_LED_GPIO_Port, USER_LED_Pin, GPIO_PIN_SET);
+//	HAL_GPIO_WritePin(USER_LED_GPIO_Port, USER_LED_Pin, GPIO_PIN_SET);
 
 	AtlasSensorData sample = {0};
 	readSensors(&sample);
