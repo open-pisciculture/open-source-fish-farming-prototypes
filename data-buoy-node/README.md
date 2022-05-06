@@ -50,4 +50,9 @@ A guide for the assembly of the prototype has been included and can be consulted
 3. After the specified sampling period has passed, the microcontroller will wake up, read the sensors, transmit the values and enter sleep mode. This cycle will repeat. 
 
 ## Additional
+
+### Software Flowchart
 ![Software flowchart](images/flowchart.png)
+
+### Power Consumption Profile
+![Power consumption profile](images/PowerProfile.png)
