@@ -4,6 +4,8 @@ In this project we present the design of an open-source and low-cost buoy protot
 
 The repository is split into four sections: the data-buoy-node folder presents the main data buoy prototype, the gps-node and breakout-board categories include additional devices, and the general section holds information shared by all.
 
+We gratefully acknowledge financial support from the Ministry of Science, Technology, and Innovation in Colombia MINCIENCIAS.
+
 ## Article
 
 LINK A PLOSONE
