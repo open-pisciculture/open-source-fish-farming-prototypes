@@ -9,9 +9,13 @@ We gratefully acknowledge financial support from the Ministry of Science, Techno
 ## Article
 
 Citation:
+
+
 Medina JD, Arias A, Triana JM, Giraldo LF, Segura-Quijano F, Gonzalez-Mancera A, et al. (2022) Open-source low-cost design of a buoy for remote water quality monitoring in fish farming. PLoS ONE 17(6): e0270202. https://doi.org/10.1371/journal.pone.0270202. 
 
 Bibtex:
+
+
 @article{10.1371/journal.pone.0270202,
     doi = {10.1371/journal.pone.0270202},
     author = {Medina, Juan D. AND Arias, Alejandro AND Triana, Juan M. AND Giraldo, Luis F. AND Segura-Quijano, Fredy AND Gonzalez-Mancera, Andres AND Zambrano, Andres F. AND Quimbayo, Julián AND Castillo, Eduardo},
