@@ -16,8 +16,8 @@ Medina JD, Arias A, Triana JM, Giraldo LF, Segura-Quijano F, Gonzalez-Mancera A,
 Bibtex:
 
 
-@article{10.1371/journal.pone.0270202,
-    doi = {10.1371/journal.pone.0270202},
+@article{10.1371/journal.pone.0270202,<br>
+    doi = {10.1371/journal.pone.0270202},<br>
     author = {Medina, Juan D. AND Arias, Alejandro AND Triana, Juan M. AND Giraldo, Luis F. AND Segura-Quijano, Fredy AND Gonzalez-Mancera, Andres AND Zambrano, Andres F. AND Quimbayo, Julián AND Castillo, Eduardo},
     journal = {PLOS ONE},
     publisher = {Public Library of Science},
