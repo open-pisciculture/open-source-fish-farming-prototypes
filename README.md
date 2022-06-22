@@ -18,17 +18,17 @@ Bibtex:
 
 @article{10.1371/journal.pone.0270202,<br>
     doi = {10.1371/journal.pone.0270202},<br>
-    author = {Medina, Juan D. AND Arias, Alejandro AND Triana, Juan M. AND Giraldo, Luis F. AND Segura-Quijano, Fredy AND Gonzalez-Mancera, Andres AND Zambrano, Andres F. AND Quimbayo, Julián AND Castillo, Eduardo},
-    journal = {PLOS ONE},
-    publisher = {Public Library of Science},
-    title = {Open-source low-cost design of a buoy for remote water quality monitoring in fish farming},
-    year = {2022},
-    month = {06},
-    volume = {17},
-    url = {https://doi.org/10.1371/journal.pone.0270202},
-    pages = {1-14},
+    author = {Medina, Juan D. AND Arias, Alejandro AND Triana, Juan M. AND Giraldo, Luis F. AND Segura-Quijano, Fredy AND Gonzalez-Mancera, Andres AND Zambrano, Andres F. AND Quimbayo, Julián AND Castillo, Eduardo},<br>
+    journal = {PLOS ONE},<br>
+    publisher = {Public Library of Science},<br>
+    title = {Open-source low-cost design of a buoy for remote water quality monitoring in fish farming},<br>
+    year = {2022},<br>
+    month = {06},<br>
+    volume = {17},<br>
+    url = {https://doi.org/10.1371/journal.pone.0270202},<br>
+    pages = {1-14},<br>
     abstract = {In this paper we present the design of an open-source and low-cost buoy prototype for remote monitoring of water quality variables in fish farming. The designed battery-powered system periodically measures temperature, pH and dissolved oxygen, transmitting the information locally through a low-power wide-area network protocol to a gateway connected to a cloud service for data storage and visualization. We provide a novel buoy design that can be easily constructed with off-the-shelf materials, delivering a stable anchored float for the IoT device and the probes immersed in the water pond. The prototype was tested at an operating fish farm, showing promising results for a low-cost remote monitoring tool that enables automatic data acquisition and storage in fish farming scenarios. All the elements of this design, including hardware and software designs, are freely available under permissive licenses as an open-source project.},
-    number = {6},
+    number = {6},<br>
 }
 
 ## Sections
