@@ -25,7 +25,6 @@ Medina JD, Arias A, Triana JM, Giraldo LF, Segura-Quijano F, Gonzalez-Mancera A,
     volume = {17},<br>
     url = {https://doi.org/10.1371/journal.pone.0270202},<br>
     pages = {1-14},<br>
-    abstract = {In this paper we present the design of an open-source and low-cost buoy prototype for remote monitoring of water quality variables in fish farming. The designed battery-powered system periodically measures temperature, pH and dissolved oxygen, transmitting the information locally through a low-power wide-area network protocol to a gateway connected to a cloud service for data storage and visualization. We provide a novel buoy design that can be easily constructed with off-the-shelf materials, delivering a stable anchored float for the IoT device and the probes immersed in the water pond. The prototype was tested at an operating fish farm, showing promising results for a low-cost remote monitoring tool that enables automatic data acquisition and storage in fish farming scenarios. All the elements of this design, including hardware and software designs, are freely available under permissive licenses as an open-source project.},
     number = {6},<br>
 }
 
